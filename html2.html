@@ -15,7 +15,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden; /* Scrollbar hide karne ke liye */
+            overflow: hidden;
         }
 
         .header {
@@ -38,73 +38,91 @@
             font-weight: 400;
         }
 
-        /* Slider Container */
-        .slider-container {
-            width: 100%;
-            height: 60vh;
+        .live-badge {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
             display: flex;
             align-items: center;
-            overflow: hidden;
-            position: relative;
-            margin-top: 20px;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
-        /* The line track */
-        .slider-track {
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #3b82f6;
+        }
+
+        .scene {
+            width: 100%;
+            height: 60vh;
+            margin-top: 50px;
+            perspective: 1200px;
             display: flex;
-            gap: 30px;
-            padding: 0 50vw; /* Shuru mein center karne ke liye padding */
-            transition: transform 0.8s ease-in-out;
-            will-change: transform;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
 
-        /* Image Cards */
-        .slide-card {
-            width: 260px;
-            height: 360px;
+        .carousel {
+            width: 200px;
+            height: 280px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate360 30s infinite linear;
+            transform: rotateX(-10deg);
+        }
+
+        .scene:hover .carousel {
+            animation-play-state: paused;
+        }
+
+        .carousel-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
             border-radius: 12px;
             overflow: hidden;
-            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
             background: #18181b;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s ease;
-            border: 2px solid transparent;
+            transition: border-color 0.3s;
         }
 
-        .slide-card img {
+        .carousel-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            opacity: 0.8;
+            transition: opacity 0.3s, transform 0.3s;
         }
 
-        /* Center image highlight */
-        .slide-card.active {
+        .carousel-card:hover {
             border-color: #3b82f6;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
-            transform: scale(1.05); /* Center wali thodi badi */
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
         }
 
-        /* Progress Dots */
-        .progress-container {
-            position: absolute;
-            bottom: 30px;
-            display: flex;
-            gap: 8px;
-            z-index: 10;
+        .carousel-card:hover img {
+            opacity: 1;
+            transform: scale(1.05);
         }
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-        .dot.active {
-            background: #3b82f6;
-            width: 24px;
-            border-radius: 4px;
-            box-shadow: 0 0 10px #3b82f6;
+
+        @keyframes rotate360 {
+            from { transform: rotateX(-10deg) rotateY(0deg); }
+            to { transform: rotateX(-10deg) rotateY(-360deg); }
         }
 
         #loader {
@@ -118,10 +136,6 @@
             z-index: 20;
         }
 
-        @media (max-width: 768px) {
-            .slide-card { width: 220px; height: 320px; }
-            .header h1 { font-size: 26px; }
-        }
     </style>
 </head>
 <body>
@@ -133,99 +147,28 @@
 
     <div id="loader">Fetching Images...</div>
 
-    <div class="slider-container" id="sliderContainer">
-        <div class="slider-track" id="sliderTrack"></div>
-        <div class="progress-container" id="progress"></div>
+    <div class="scene">
+        <div class="carousel" id="carousel">
+        </div>
+    </div>
+
+    <div class="live-badge">
+        <div class="live-dot"></div>
+        LIVE
     </div>
 
     <script>
-        let images = [];
-        let currentIndex = 0;
-        let autoPlayInterval = null;
-        
-        const SLIDE_TIME = 3000; // Har 3 second mein agli image
-
-        function shuffle(array) {
-            let currentIndex = array.length, randomIndex;
-            while (currentIndex != 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-            }
-            return array;
-        }
-
-        function initSlider() {
-            const track = document.getElementById('sliderTrack');
-            const progress = document.getElementById('progress');
-            track.innerHTML = '';
-            progress.innerHTML = '';
-
-            images.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'slide-card' + (index === 0 ? ' active' : '');
-                card.innerHTML = `<img src="${item.url}" alt="Project Image">`;
-                track.appendChild(card);
-
-                const dot = document.createElement('div');
-                dot.className = 'dot' + (index === 0 ? ' active' : '');
-                progress.appendChild(dot);
-            });
-
-            // Shuru mein pehli image center karne ke liye thoda delay
-            setTimeout(() => moveToSlide(0), 100);
-            startAutoPlay();
-        }
-
-        function moveToSlide(index) {
-            const track = document.getElementById('sliderTrack');
-            const cards = document.querySelectorAll('.slide-card');
-            const dots = document.querySelectorAll('.dot');
-            const container = document.getElementById('sliderContainer');
-
-            if (cards.length === 0) return;
-
-            // Highlight update
-            cards.forEach(c => c.classList.remove('active'));
-            dots.forEach(d => d.classList.remove('active'));
-            cards[index].classList.add('active');
-            dots[index].classList.add('active');
-
-            // Position calculation (Bilkul straight line center)
-            const cardWidth = cards[index].offsetWidth;
-            const gap = 30; 
-            const containerWidth = container.offsetWidth;
-            
-            const offset = (cardWidth + gap) * index;
-            const centerOffset = (containerWidth / 2) - (cardWidth / 2);
-            
-            track.style.transform = `translateX(${centerOffset - offset}px)`;
-            
-            currentIndex = index;
-        }
-
-        function startAutoPlay() {
-            if (autoPlayInterval) clearInterval(autoPlayInterval);
-            autoPlayInterval = setInterval(() => {
-                let nextIndex = currentIndex + 1;
-                // Agar end par pohanch jaye toh wapis shuru se chalu ho
-                if (nextIndex >= images.length) {
-                    nextIndex = 0; 
-                }
-                moveToSlide(nextIndex);
-            }, SLIDE_TIME);
-        }
-
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
-                const contentType = response.headers.get("content-type");
                 
+                const contentType = response.headers.get("content-type");
                 if (!contentType || !contentType.includes("application/json")) {
                     throw new Error("Server did not return JSON.");
                 }
 
                 const data = await response.json();
+                const carousel = document.getElementById('carousel');
                 const loader = document.getElementById('loader');
                 const subtitle = document.getElementById('subtitle');
 
@@ -236,26 +179,37 @@
                     return;
                 }
 
-                images = shuffle(data);
-                subtitle.innerText = `Line Scrolling (${images.length} Images)`;
+                subtitle.innerText = `Rotating 3D Preview (${data.length} Images)`;
 
-                initSlider();
+                const totalItems = data.length;
+                const cardWidth = 200;
+                
+                let radius = (cardWidth / 2) / Math.tan(Math.PI / totalItems);
+                if (totalItems < 4) radius = 300;
+
+                const angleStep = 360 / totalItems;
+
+                data.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'carousel-card';
+                    
+                    const angle = index * angleStep;
+                    card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+
+                    card.innerHTML = `
+                        <img src="${item.url}" alt="Image" loading="lazy">
+                    `;
+                    carousel.appendChild(card);
+                });
 
             } catch (error) {
                 document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
             }
         }
 
-        // Hover karne par pause ho jaye
-        document.getElementById('sliderContainer').addEventListener('mouseenter', () => {
-            clearInterval(autoPlayInterval);
-        });
-        
-        document.getElementById('sliderContainer').addEventListener('mouseleave', () => {
-            startAutoPlay();
-        });
-
-        window.onload = loadImages;
+        window.onload = function() {
+            loadImages();
+        };
     </script>
 </body>
 </html>
