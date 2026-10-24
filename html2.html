@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
         body { 
-            background: radial-gradient(circle at center, #1a1a20 0%, #09090b 100%);
+            background: #09090b; /* Simple dark background */
             color: #fff;
             min-height: 100vh; 
             display: flex;
@@ -38,76 +38,53 @@
             font-weight: 400;
         }
 
-        /* Container for the straight line slider */
+        /* Container for the simple straight slider */
         .slider-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 100vw;
             height: 60vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            perspective: 1000px;
             overflow: hidden;
             position: relative;
             margin-top: 20px;
         }
 
-        /* The track that moves left to right */
+        /* The track that holds images and moves smoothly */
         .slider-track {
             display: flex;
-            gap: 30px; /* Space between images */
+            gap: 20px; /* Space between images */
             padding: 20px;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.8s ease-in-out; /* Smooth scroll */
             will-change: transform;
         }
 
-        /* Individual Image Card */
+        /* Simple Image Card */
         .slide-card {
             width: 280px;
             height: 380px;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
             flex-shrink: 0;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 
-                        0 0 0 1px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             background: #18181b;
-            transition: all 0.4s ease;
-            position: relative;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            border: 2px solid transparent;
         }
 
         .slide-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.85;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            display: block;
         }
 
-        /* Premium glowing effect on the center/active card */
+        /* Simple highlight for the center image */
         .slide-card.active {
-            transform: scale(1.05) translateZ(20px);
-            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.3), 
-                        0 0 0 2px rgba(59, 130, 246, 0.5);
-            z-index: 2;
-        }
-
-        .slide-card.active img {
-            opacity: 1;
             transform: scale(1.02);
-        }
-
-        /* Dark gradient overlay for depth */
-        .slide-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.8) 100%);
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
-        .slide-card.active::after {
-            opacity: 0.3;
+            border-color: #3b82f6;
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
         }
 
         /* Progress dots at the bottom */
@@ -123,12 +100,11 @@
             height: 8px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
         }
         .dot.active {
             background: #3b82f6;
-            box-shadow: 0 0 10px #3b82f6;
-            width: 24px;
+            width: 20px;
             border-radius: 4px;
         }
 
@@ -169,9 +145,9 @@
         let currentIndex = 0;
         let autoPlayInterval = null;
         
-        const SLIDE_TIME = 3000; // 3 seconds per slide
+        const SLIDE_TIME = 2500; // Time each image stays in center (2.5 seconds)
 
-        // Shuffle array for random order
+        // Shuffle array for random order (waisa hi rakha hai)
         function shuffle(array) {
             let currentIndex = array.length, randomIndex;
             while (currentIndex != 0) {
@@ -190,7 +166,7 @@
             progress.innerHTML = '';
 
             images.forEach((item, index) => {
-                // Create Card
+                // Create Image Card
                 const card = document.createElement('div');
                 card.className = 'slide-card' + (index === 0 ? ' active' : '');
                 card.innerHTML = `<img src="${item.url}" alt="Project Image">`;
@@ -206,7 +182,7 @@
             startAutoPlay();
         }
 
-        // Function to calculate movement and slide
+        // Function to slide smoothly line by line
         function moveToSlide(index) {
             const track = document.getElementById('sliderTrack');
             const cards = document.querySelectorAll('.slide-card');
@@ -215,23 +191,23 @@
 
             if (cards.length === 0) return;
 
-            // Remove active classes
+            // Remove active class from all
             cards.forEach(c => c.classList.remove('active'));
             dots.forEach(d => d.classList.remove('active'));
 
-            // Add active class to current
+            // Add active class to current center image
             cards[index].classList.add('active');
             dots[index].classList.add('active');
 
-            // Calculate exact center position for the active card
+            // Math to calculate exact center position
             const cardWidth = cards[index].offsetWidth;
-            const gap = 30; // match CSS gap
+            const gap = 20; // Same as CSS gap
             const containerWidth = container.offsetWidth;
             
-            // Math to keep the active card dead center
             const offset = (cardWidth + gap) * index;
             const centerOffset = (containerWidth / 2) - (cardWidth / 2);
             
+            // Smooth translateX movement
             track.style.transform = `translateX(${centerOffset - offset}px)`;
             
             currentIndex = index;
@@ -249,7 +225,7 @@
             }, SLIDE_TIME);
         }
 
-        // Fetch Data
+        // Fetch Data (API code waisa hi hai)
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
@@ -271,7 +247,7 @@
                 }
 
                 images = shuffle(data);
-                subtitle.innerText = `Smooth Line Showcase (${images.length} Images)`;
+                subtitle.innerText = `Line Scrolling (${images.length} Images)`;
 
                 initSlider();
 
@@ -280,7 +256,7 @@
             }
         }
 
-        // Pause auto-play on hover (Premium touch)
+        // Pause on hover
         document.getElementById('sliderContainer').addEventListener('mouseenter', () => {
             clearInterval(autoPlayInterval);
         });
