@@ -1,14 +1,13 @@
-// api/delete.js
-import { config } from '../config.js';
-
 export default async function handler(req, res) {
     if (req.method !== 'DELETE') return res.status(405).json({ error: 'Method not allowed' });
 
     const { fileId } = req.query;
     if (!fileId) return res.status(400).json({ error: 'fileId required' });
 
+    // APNI PRIVATE KEY YAHAN DAALEIN
+    const privateKey = "private_OBhaXibMoYiOEHfSS2u1zOvHOgI=";
+
     try {
-        const privateKey = config.IMAGEKIT_PRIVATE_KEY;
         const response = await fetch(`https://api.imagekit.io/v1/files/${fileId}`, {
             method: 'DELETE',
             headers: {
