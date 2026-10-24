@@ -41,7 +41,6 @@
     </div>
 
     <script>
-        // Helper function to handle errors safely
         async function handleResponse(response) {
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) {
@@ -49,7 +48,8 @@
                 if (!response.ok) throw new Error(data.error || `HTTP Error: ${response.status}`);
                 return data;
             } else {
-                throw new Error(`API route galat kaam kar raha hai. Server ne HTML bheja hai (Status: ${response.status})`);
+                const text = await response.text();
+                throw new Error(`Server Error: ${text.substring(0, 50)}... (Vercel Logs check karein)`);
             }
         }
 
@@ -70,8 +70,7 @@
 
             try {
                 const response = await fetch('/api/upload', { method: 'POST', body: formData });
-                await handleResponse(response); // JSON check
-                
+                await handleResponse(response);
                 statusDiv.innerHTML = '<span class="success">Image Upload Ho Gayi!</span>';
                 fileInput.value = "";
                 loadAllImages(); 
@@ -86,8 +85,7 @@
             statusDiv.className = '';
             try {
                 const response = await fetch('/api/list');
-                const data = await handleResponse(response); // JSON check
-                
+                const data = await handleResponse(response);
                 statusDiv.innerHTML = `<span class="success">${data.length} Images Load Ho Gayi!</span>`;
                 renderGallery(data);
             } catch (error) {
@@ -123,8 +121,7 @@
             statusDiv.className = '';
             try {
                 const response = await fetch(`/api/delete?fileId=${fileId}`, { method: 'DELETE' });
-                await handleResponse(response); // JSON check
-                
+                await handleResponse(response);
                 statusDiv.innerHTML = '<span class="success">Image Delete Ho Gayi!</span>';
                 loadAllImages(); 
             } catch (error) {
