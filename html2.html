@@ -2,234 +2,706 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Project Showcase</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>SHABAN-MD - BOT DEVELOPER</title>
+    <!-- SEO Tags -->
+    <meta name="description" content="Official Portfolio of MR SHABAN, a Premium WhatsApp Bot Developer. Explore SHABAN-MD and EDITH-MD bots.">
+    <meta property="og:title" content="SHABAN Developer Portfolio">
+    <meta property="og:image" content="https://ik.imagekit.io/shaban/SHABAN-1771087253679_7G5hGcdti.jpg">
+    
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        
-        body { 
-            background: #09090b; /* Very dark background like screenshot */
-            color: #fff;
-            min-height: 100vh; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden; /* Hide scrollbars */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+
+        :root {
+            --primary: #6C5CE7;
+            --secondary: #00CECE;
+            --accent: #FF6B6B;
+            --bg: #0A0A0A;
+            --bg-secondary: #1A1A1A;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        /* Header styling */
-        .header {
-            text-align: center;
-            margin-top: 40px;
-            z-index: 10;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-            color: #ffffff;
+        html {
+            scroll-behavior: smooth !important;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            height: 100%;
+            background: #0A0A0A;
         }
 
-        .header p {
-            font-size: 16px;
-            color: #a1a1aa;
-            font-weight: 400;
+        body {
+            background: #0A0A0A !important;
+            background-attachment: fixed !important;
+            color: white;
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Live Button at bottom */
-        .live-badge {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
+        .smooth-scroll-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .glass {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #e2e8f0;
-            backdrop-filter: blur(10px);
-            z-index: 10;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #3b82f6; /* Blue dot */
+        /* 1. Hero Animated Profile */
+        .profile-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .profile-frame {
+            position: absolute;
+            inset: -8px;
             border-radius: 50%;
-            box-shadow: 0 0 10px #3b82f6;
+            background: linear-gradient(45deg, #f06, #9f6, #06f, #f06);
+            background-size: 400% 400%;
+            animation: rotateGradient 4s linear infinite, floating 3s ease-in-out infinite;
+            z-index: 1;
         }
 
-        /* 3D Scene Setup */
+        .profile-img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #0A0A0A;
+            z-index: 2;
+        }
+
+        .profile-glow {
+            position: absolute;
+            inset: -15px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #6C5CE7, transparent 70%);
+            filter: blur(20px);
+            animation: pulseGlow 2s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes rotateGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 3D Card Effect */
+        .card-3d-wrap {
+            perspective: 1000px;
+            height: 350px;
+            margin-bottom: 20px;
+        }
+
+        .card-3d-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .card-3d-wrap:hover .card-3d-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+        }
+
+        /* --- 3D ROTATING CAROUSEL STYLES --- */
         .scene {
             width: 100%;
-            height: 60vh;
-            margin-top: 50px;
-            perspective: 1200px; /* Depth of field */
+            height: 400px;
+            perspective: 1200px;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
+            overflow: visible;
         }
 
-        /* The rotating cylinder */
         .carousel {
             width: 200px;
             height: 280px;
-            position: relative;
+            position: absolute;
             transform-style: preserve-3d;
-            animation: rotate360 30s infinite linear; /* 30s for slow rotation */
-            transform: rotateX(-10deg); /* Slight tilt for better view */
+            animation: rotate360 30s infinite linear;
+            transform: rotateX(-5deg); /* Halka sa tilt */
         }
 
-        /* Pause animation on hover */
         .scene:hover .carousel {
             animation-play-state: paused;
         }
 
-        /* Individual Image Cards */
         .carousel-card {
             position: absolute;
-            width: 100%;
-            height: 100%;
+            width: 200px;
+            height: 280px;
             left: 0;
             top: 0;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
             border: 2px solid rgba(255, 255, 255, 0.1);
-            background: #18181b;
-            transition: border-color 0.3s;
+            background: #1a1a1a;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            backface-visibility: visible;
         }
 
-        /* Image styling */
         .carousel-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.8;
-            transition: opacity 0.3s, transform 0.3s;
         }
 
-        /* Highlight on hover */
         .carousel-card:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+            border-color: var(--secondary);
+            box-shadow: 0 0 30px rgba(0, 206, 206, 0.5);
         }
 
-        .carousel-card:hover img {
-            opacity: 1;
-            transform: scale(1.05);
-        }
-
-        /* Keyframes for infinite rotation */
         @keyframes rotate360 {
-            from { transform: rotateX(-10deg) rotateY(0deg); }
-            to { transform: rotateX(-10deg) rotateY(-360deg); }
+            from { transform: rotateX(-5deg) rotateY(0deg); }
+            to { transform: rotateX(-5deg) rotateY(-360deg); }
         }
 
-        /* Loader */
-        #loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #3b82f6;
-            font-size: 18px;
-            font-weight: 600;
-            z-index: 20;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0A0A0A; }
+        ::-webkit-scrollbar-thumb { background: #6C5CE7; border-radius: 10px; }
+
+        .text-shimmer {
+            background: linear-gradient(to right, #fff 20%, #6C5CE7 40%, #00CECE 60%, #fff 80%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            animation: shimmer 3s linear infinite;
         }
 
+        @keyframes shimmer {
+            to { background-position: 200% center; }
+        }
+
+        .badge-pulse {
+            animation: badge-pulse 2s infinite;
+        }
+
+        @keyframes badge-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(108, 92, 231, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        }
+
+        @media (max-width: 768px) {
+            .card-3d-wrap { height: 300px; }
+            .text-4xl { font-size: 2rem; }
+            .profile-container { width: 150px; height: 150px; }
+            .carousel { width: 140px; height: 200px; }
+            .carousel-card { width: 140px; height: 200px; }
+        }
     </style>
 </head>
 <body>
+    <!-- Background layer -->
+    <div class="fixed inset-0 w-full h-full" style="background: #0A0A0A; z-index: -1;"></div>
 
-    <!-- Header -->
-    <div class="header">
-        <h1>Project Showcases</h1>
-        <p id="subtitle">Loading Gallery...</p>
-    </div>
-
-    <!-- Loader -->
-    <div id="loader">Fetching Images...</div>
-
-    <!-- 3D Scene -->
-    <div class="scene">
-        <div class="carousel" id="carousel">
-            <!-- Images injected here -->
+    <!-- Notification system -->
+    <div id="notification" class="fixed top-5 right-5 z-[100] transform translate-x-full transition-transform duration-300">
+        <div class="glass px-6 py-4 rounded-xl border-l-4 border-cyan-500 flex items-center gap-3">
+            <i class="fas fa-bell text-cyan-400"></i>
+            <span id="notif-text">🎉 WELCOME ² MR SHABAN PORTFOLIO!</span>
         </div>
     </div>
 
-    <!-- Live Button -->
-    <div class="live-badge">
-        <div class="live-dot"></div>
-        LIVE
+    <!-- 1. Hero Section -->
+    <section class="min-h-screen flex flex-col items-center justify-center px-4 pt-20">
+        <div class="profile-container mb-8">
+            <div class="profile-glow"></div>
+            <div class="profile-frame"></div>
+            <img src="https://ik.imagekit.io/shaban/SHABAN-1771087253679_7G5hGcdti.jpg" alt="Developer" class="profile-img" loading="eager">
+            <div class="absolute -bottom-2 -right-2 glass p-2 rounded-full z-10">
+                <span class="flex h-4 w-4">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 text-shimmer">SHABAN MD</h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-6 flex items-center justify-center gap-2">
+                <span class="text-primary">✦</span> Main Developer <span class="text-primary">✦</span>
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-10">
+                <span class="glass px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 border-yellow-500/30">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400"></span> 🟨 JavaScript
+                </span>
+                <span class="glass px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 border-green-500/30">
+                    <span class="w-2 h-2 rounded-full bg-green-400"></span> 🟩 Node.js
+                </span>
+                <span class="glass px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 border-blue-500/30">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span> 🟦 HTML
+                </span>
+                <span class="glass px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 border-indigo-500/30">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> 🐍 Python
+                </span>
+            </div>
+
+            <div class="flex gap-4 justify-center">
+                <a href="#projects" class="px-8 py-3 rounded-full bg-primary text-white font-bold hover:scale-105 transition-all shadow-lg shadow-purple-500/25">View Projects</a>
+                <a href="#gallery" class="px-8 py-3 rounded-full glass border border-white/10 text-white font-bold hover:bg-white/10 transition-all">Gallery</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-10 px-4">
+        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass p-6 rounded-2xl text-center">
+                <div class="text-3xl font-bold text-primary mb-1">10K+</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">Bot Users</div>
+            </div>
+            <div class="glass p-6 rounded-2xl text-center">
+                <div class="text-3xl font-bold text-secondary mb-1">700+</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">Commands</div>
+            </div>
+            <div class="glass p-6 rounded-2xl text-center">
+                <div class="text-3xl font-bold text-accent mb-1" id="total-stars">500+</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">GitHub Stars</div>
+            </div>
+            <div class="glass p-6 rounded-2xl text-center">
+                <div class="text-3xl font-bold text-white mb-1">50+</div>
+                <div class="text-xs text-gray-400 uppercase tracking-widest">Countries</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 px-4 max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Project 4: EDITH-MD -->
+            <div class="card-3d-wrap">
+                <div class="card-3d-inner">
+                    <div class="card-front glass border-cyan-500/20">
+                        <div class="text-5xl mb-4">🥈</div>
+                        <h3 class="text-2xl font-bold mb-2">EDITH-MD BOT</h3>
+                        <p class="text-gray-400 text-center mb-4">Advanced AI integrated WhatsApp assistant for group management.</p>
+                        <div class="flex gap-4 mt-auto">
+                            <span class="text-sm bg-cyan-500/20 px-3 py-1 rounded-full text-cyan-300">
+                                <i class="fas fa-star mr-1"></i> <span id="edith-stars">...</span> Stars
+                            </span>
+                            <span class="text-sm bg-pink-500/20 px-3 py-1 rounded-full text-pink-300">
+                                <i class="fas fa-code-branch mr-1"></i> <span id="edith-forks">...</span> Forks
+                            </span>
+                        </div>
+                        <p class="mt-4 text-xs text-cyan-400 animate-pulse">Hover to see more →</p>
+                    </div>
+                    <div class="card-back glass">
+                        <h3 class="text-xl font-bold mb-4">AI Powered</h3>
+                        <p class="text-sm text-gray-300 mb-6 text-center">Integrated with OpenAI and custom NLP models for smart responses.</p>
+                        <div class="flex flex-col w-full gap-3">
+                            <a href="https://github.com/Bandah-E-Ali/Edith-MD" target="_blank" class="w-full py-3 bg-cyan-500 text-white text-center font-bold rounded-xl hover:bg-cyan-600 transition-colors">GitHub Repository</a>
+                            <a href="#" class="w-full py-3 border border-cyan-500/20 text-center font-bold rounded-xl hover:bg-cyan-500/10 transition-colors">Live Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     
+            <!-- Project 6: SHABAN MINI -->
+            <div class="card-3d-wrap">
+                <div class="card-3d-inner">
+                    <div class="card-front glass border-blue-500/20">
+                        <div class="text-5xl mb-4">👽</div>
+                        <h3 class="text-2xl font-bold mb-2">SMD MINI BOT</h3>
+                        <p class="text-gray-400 text-center mb-4">Official SMD MINI Free Deployment Site</p>
+                        <div class="flex gap-4 mt-auto">
+                            <span class="text-sm bg-orange-500/20 px-3 py-1 rounded-full text-green-300">
+                                <i class="fas fa-signal mr-1"></i> Digital
+                            </span>
+                            <span class="text-sm bg-blue-500/20 px-3 py-1 rounded-full text-gold-300">
+                                <i class="fas fa-globe mr-1"></i> SMD MINI
+                            </span>
+                        </div>
+                        <p class="mt-4 text-xs text-orange-400 animate-pulse">Hover to tune in →</p>
+                    </div>
+                    <div class="card-back glass">
+                        <h3 class="text-xl font-bold mb-4"> MINI & BOT</h3>
+                        <p class="text-sm text-gray-300 mb-6 text-center">First Fork SMD-MINI Github Repo Put Your WhatsaApp Number With Country Code Example 923043788282 Click Pair Code Copy Link Device WhatasApp Put Code Wait 1 Minute Bot Statard Type .Ping</p>
+                        <div class="flex flex-col w-full gap-3">
+                            <a href="https://mr-shaban.vercel.app/" target="_blank" class="w-full py-3 bg-orange-500 text-white text-center font-bold rounded-xl hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
+                                <i class="fas fa-play"></i> Click Site
+                            </a>
+                            <a href="#" class="w-full py-3 border border-white/20 text-center font-bold rounded-xl hover:bg-white/10 transition-colors">FREE MINI-BOT</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+            <!-- Project 11: SMD TV APP -->
+            <div class="card-3d-wrap">
+                <div class="card-3d-inner">
+                    <div class="card-front glass border-orange-500/20">
+                        <div class="text-5xl mb-4">🎬</div>
+                        <h3 class="text-2xl font-bold mb-2">SMD TV</h3>
+                        <p class="text-gray-400 text-center mb-4">Global World Live TV Channels & Radio Stations Pakistani, Indian, USA, Afghanistan, Punjab & etc.</p>
+                        <div class="flex gap-4 mt-auto">
+                            <span class="text-sm bg-orange-500/20 px-3 py-1 rounded-full text-orange-300">
+                                <i class="fas fa-signal mr-1"></i> 24/7 Live
+                            </span>
+                            <span class="text-sm bg-red-500/20 px-3 py-1 rounded-full text-red-300">
+                                <i class="fas fa-globe mr-1"></i> Worldwide
+                            </span>
+                        </div>
+                        <p class="mt-4 text-xs text-orange-400 animate-pulse">Hover to tune in →</p>
+                    </div>
+                    <div class="card-back glass">
+                        <h3 class="text-xl font-bold mb-4">🎵 Listen Live</h3>
+                        <p class="text-sm text-gray-300 mb-6 text-center">Tune in to Pakistani, Indian, USA, Afghan & 24/7.</p>
+                        <div class="flex flex-col w-full gap-3">
+                            <a href="https://www.appcreator24.com/app4027757-tx1vm5" target="_blank" class="w-full py-3 bg-orange-500 text-white text-center font-bold rounded-xl hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
+                                <i class="fas fa-play"></i> Download Now App
+                            </a>
+                            <a href="#" class="w-full py-3 border border-white/20 text-center font-bold rounded-xl hover:bg-white/10 transition-colors">TV Channels & FM Channels</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 3D Image Gallery (API wala) -->
+    <section id="gallery" class="py-20 glass mx-4 rounded-[40px] mb-20 relative overflow-hidden">
+        <div class="text-center mb-10 z-10 relative">
+            <h2 class="text-4xl font-bold">Project Showcases</h2>
+            <p class="text-gray-400" id="gallery-subtitle">Loading 3D Preview...</p>
+        </div>
+        
+        <div class="scene" id="scene">
+            <div class="carousel" id="carousel">
+                <!-- API se images yahan aayengi -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. SHABAN-MD Features -->
+    <section class="py-20 px-4 max-w-6xl mx-auto">
+        <h2 class="text-4xl font-bold mb-16 text-center">Bot Core Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Feature Cards -->
+            <div class="glass p-8 rounded-3xl hover:border-primary/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">🤖</div>
+                <h3 class="text-xl font-bold mb-2">Antidelete</h3>
+                <p class="text-gray-400 text-sm">Blocks deleted messages instantly, keeping logs for you.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-secondary/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-secondary/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">🔗</div>
+                <h3 class="text-xl font-bold mb-2">Antilink</h3>
+                <p class="text-gray-400 text-sm">Detects and blocks unauthorized group links automatically.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-accent/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-accent/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">👁️</div>
+                <h3 class="text-xl font-bold mb-2">Antiviewonce</h3>
+                <p class="text-gray-400 text-sm">Captures View Once media and stores it in your private chat.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-purple-500/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-purple-500/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">📞</div>
+                <h3 class="text-xl font-bold mb-2">Anticall</h3>
+                <p class="text-gray-400 text-sm">Automatically rejects and blocks incoming WhatsApp calls.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-yellow-500/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-yellow-500/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">⚡</div>
+                <h3 class="text-xl font-bold mb-2">Auto Reacts</h3>
+                <p class="text-gray-400 text-sm">Interactive emoji reactions based on message context.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-blue-500/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">💭</div>
+                <h3 class="text-xl font-bold mb-2">Status Reacts</h3>
+                <p class="text-gray-400 text-sm">Never miss a status! Auto-react to your contacts' updates.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-cyan-500/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-cyan-500/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">👀</div>
+                <h3 class="text-xl font-bold mb-2">Status Seen</h3>
+                <p class="text-gray-400 text-sm">Automatically view statuses and mark them as read.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-pink-500/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-pink-500/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">📥</div>
+                <h3 class="text-xl font-bold mb-2">YT Download</h3>
+                <p class="text-gray-400 text-sm">Fast YouTube video and audio downloader built-in.</p>
+            </div>
+            <div class="glass p-8 rounded-3xl hover:border-orange-500/50 transition-all group hover:-translate-y-2">
+                <div class="w-12 h-12 bg-orange-500/20 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">📱</div>
+                <h3 class="text-xl font-bold mb-2">Social DL</h3>
+                <p class="text-gray-400 text-sm">Download content from TikTok, IG, FB with one command.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Deployment Platforms -->
+    <section class="py-20 bg-black/30">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-10">Supported Platforms</h2>
+            <div class="flex flex-wrap justify-center gap-8">
+                <div class="group relative cursor-pointer">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/heroku/heroku-original.svg" class="w-16 h-16 grayscale group-hover:grayscale-0 transition-all duration-300 transform group-hover:scale-110" alt="heroku">
+                    <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">heroku</span>
+                    <div class="mt-2 text-[10px] text-green-400 font-bold uppercase tracking-widest">Heroku</div>
+                </div>
+                <div class="group relative cursor-pointer">
+                    <img src="https://ik.imagekit.io/19imy4f1u/lite_1776275706537_il0Wnms10.jpeg" class="w-16 h-16 grayscale group-hover:grayscale-0 transition-all" alt="Render">
+                    <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Render</span>
+                    <div class="mt-2 text-[10px] text-green-400 font-bold uppercase tracking-widest">Render</div>
+                </div>
+                <div class="group relative cursor-pointer">
+                    <img src="https://ik.imagekit.io/19imy4f1u/lite_1776276041407_IlXjH4F8g.jpeg" class="w-16 h-16 grayscale group-hover:grayscale-0 transition-all" alt="Koyeb">
+                    <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Koyeb</span>
+                    <div class="mt-2 text-[10px] text-green-400 font-bold uppercase tracking-widest">Koyeb</div>
+                </div>
+                <div class="group relative cursor-pointer">
+                    <img src="https://railway.app/brand/logo-light.svg" class="w-16 h-16 grayscale group-hover:grayscale-0 transition-all" alt="Railway">
+                    <span class="absolute -top-10 left-1/2 -translate-x-1/2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Railway</span>
+                    <div class="mt-2 text-[10px] text-green-400 font-bold uppercase tracking-widest">Railway</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOMTHLY Feature -->
+    <div class="fixed bottom-10 left-10 z-50 pointer-events-none">
+        <div class="glass px-4 py-2 rounded-xl text-xs font-bold border-l-4 border-accent badge-pulse pointer-events-auto cursor-help">
+            <span class="text-accent">📡</span> LIVE
+        </div>
     </div>
 
+    <!-- 10. Footer Section -->
+    <footer class="py-20 border-t border-white/10 mt-20 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto px-4 text-center relative z-10">
+            <div class="text-2xl font-bold mb-4 tracking-tighter">═══════════════</div>
+            <p class="text-gray-400 mb-2">Created by <span class="text-white font-bold">Team.Bandaheali</span></p>
+            <p class="text-sm text-gray-500 mb-8">© 2022-2026 All Rights Reserved</p>
+            
+           <div class="flex justify-center gap-8 mb-10">
+                <a href="https://github.com/botkeeda" target="_blank" class="text-2xl hover:text-primary transition-colors">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.facebook.com/share/1Dc5NgdRxB/" target="_blank" class="text-2xl hover:text-cyan-400 transition-colors">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="https://instagram.com/mrshaban282" target="_blank" class="text-2xl hover:text-pink-400 transition-colors">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://wa.me/+923043788282" target="_blank" class="text-2xl hover:text-blue-500 transition-colors">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-x-10 gap-y-4 text-xs font-bold uppercase tracking-widest text-gray-500">
+                <span class="flex items-center gap-1"><i class="fas fa-gem text-primary"></i> Premium Badge</span>
+                <span class="flex items-center gap-1"><i class="fas fa-crown text-yellow-500"></i> Developer Crown</span>
+                <span class="flex items-center gap-1"><i class="fas fa-check-circle text-cyan-400"></i> Verified Status</span>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        async function loadImages() {
+        // Gallery ke liye fallback images agar API fail ho jaye
+        const fallbackImages = [
+            'https://ik.imagekit.io/shaban/SHABAN-1771090549579_yidgGV67B.jpg',
+            'https://ik.imagekit.io/shaban/SHABAN-1771090596782_iOvOtGm8X.jpg',
+            'https://ik.imagekit.io/shaban/SHABAN-1771090632475_OTysLu4ww.jpg',
+            'https://ik.imagekit.io/shaban/SHABAN-1771090672480_2Ubec1baF.jpg',
+            'https://ik.imagekit.io/shaban/SHABAN-1771090704277_ClY9lTdhN.jpg',
+        ];
+
+        // 3D Carousel Rendering Function
+        function render3DCarousel(images) {
+            const carousel = document.getElementById('carousel');
+            const subtitle = document.getElementById('gallery-subtitle');
+            
+            carousel.innerHTML = "";
+            
+            if (images.length === 0) {
+                subtitle.innerText = "No images found.";
+                return;
+            }
+
+            subtitle.innerText = `Rotating 3D Preview (${images.length} Images)`;
+
+            // 3D Math: Radius calculate karein taake images overlap na hon
+            const totalItems = images.length;
+            const cardWidth = 200; // CSS se match karein
+            
+            // Agar images kam hain toh radius bada rakhein
+            let radius = (cardWidth / 2) / Math.tan(Math.PI / totalItems);
+            if (totalItems < 4) radius = 300; 
+
+            const angleStep = 360 / totalItems;
+
+            images.forEach((imgUrl, index) => {
+                const card = document.createElement('div');
+                card.className = 'carousel-card';
+                
+                // Har image ko uske angle par set karein
+                const angle = index * angleStep;
+                card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+
+                card.innerHTML = `<img src="${imgUrl}" alt="Showcase" loading="lazy">`;
+                carousel.appendChild(card);
+            });
+        }
+
+        // API se Images Fetch Karein
+        async function loadGalleryImages() {
             try {
                 const response = await fetch('/api/list');
+                if (!response.ok) throw new Error("API error");
                 
-                const contentType = response.headers.get("content-type");
-                if (!contentType || !contentType.includes("application/json")) {
-                    throw new Error("Server did not return JSON.");
-                }
-
                 const data = await response.json();
-                const carousel = document.getElementById('carousel');
-                const loader = document.getElementById('loader');
-                const subtitle = document.getElementById('subtitle');
-
-                loader.style.display = 'none'; // Hide loader
-
-                if (data.length === 0) {
-                    subtitle.innerText = "No images found.";
-                    return;
-                }
-
-                // Update subtitle count
-                subtitle.innerText = `Rotating 3D Preview (${data.length} Images)`;
-
-                // 3D Math: Calculate radius based on number of images
-                // Formula: radius = (item_width / 2) / tan(PI / n)
-                const totalItems = data.length;
-                const cardWidth = 200;
                 
-                // Ensure radius is not too small if images are few
-                let radius = (cardWidth / 2) / Math.tan(Math.PI / totalItems);
-                if (totalItems < 4) radius = 300; // Minimum radius for few images
-
-                const angleStep = 360 / totalItems;
-
-                data.forEach((item, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'carousel-card';
-                    
-                    // Rotate each card and push it outward by the radius
-                    const angle = index * angleStep;
-                    card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-
-                    card.innerHTML = `
-                        <img src="${item.url}" alt="Image" loading="lazy">
-                    `;
-                    carousel.appendChild(card);
-                });
-
+                if (data && data.length > 0) {
+                    // API se URLs extract karein
+                    const apiImages = data.map(item => item.url);
+                    render3DCarousel(apiImages);
+                } else {
+                    // Agar ImageKit khali hai toh fallback
+                    render3DCarousel(fallbackImages);
+                }
             } catch (error) {
-                document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
+                console.error("Gallery API Error:", error);
+                // Error aane par fallback images
+                render3DCarousel(fallbackImages);
             }
         }
 
-        window.onload = function() {
-            loadImages();
-        };
+        // GitHub Stats Fetcher
+        async function fetchGitHubStats() {
+            try {
+                const repos = [
+                    { id: 'shaban', owner: 'botkeeda', repo: 'SHABAN-AI' },
+                    { id: 'edith', owner: 'Bandah-E-Ali', repo: 'Edith-MD' }
+                ];
+
+                let totalStars = 0;
+
+                for (const r of repos) {
+                    const res = await fetch(`https://api.github.com/repos/${r.owner}/${r.repo}`);
+                    const data = await res.json();
+                    
+                    document.getElementById(`${r.id}-stars`).textContent = data.stargazers_count || '0';
+                    document.getElementById(`${r.id}-forks`).textContent = data.forks_count || '0';
+                    totalStars += data.stargazers_count || 0;
+                }
+                
+                document.getElementById('total-stars').textContent = totalStars + '+';
+            } catch (e) {
+                console.error("Github API Error:", e);
+                document.getElementById('shaban-stars').textContent = '1200';
+                document.getElementById('shaban-forks').textContent = '3900';
+                document.getElementById('edith-stars').textContent = '500';
+                document.getElementById('edith-forks').textContent = '1400';
+                document.getElementById('total-stars').textContent = '1000+';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGalleryImages(); // Load Images from API
+            fetchGitHubStats();
+
+            setTimeout(() => {
+                const notif = document.getElementById('notification');
+                if (notif) {
+                    notif.classList.remove('translate-x-full');
+                    setTimeout(() => notif.classList.add('translate-x-full'), 5000);
+                }
+            }, 3000);
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        let ticking = false;
+        let lastScrollY = 0;
+        
+        window.addEventListener('scroll', () => {
+            lastScrollY = window.scrollY;
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.closest('.scene')) {
+                return;
+            }
+        }, { passive: true });
+
+        document.body.style.backgroundColor = '#0A0A0A';
     </script>
 </body>
 </html>
