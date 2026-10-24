@@ -18,6 +18,50 @@
             align-items: center;
         }
 
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 35px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .login-box h2 { margin-bottom: 20px; font-size: 20px; }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .login-box input::placeholder { letter-spacing: normal; font-size: 14px; }
+        .login-box button { width: 100%; padding: 12px; font-size: 15px; }
+        .login-error { color: #ef4444; font-size: 13px; margin-top: 10px; min-height: 18px; }
+
+        /* Main app hidden until login */
+        #mainApp { display: none; width: 100%; flex-direction: column; align-items: center; }
+
         /* Control Panel */
         .control-panel { 
             background: rgba(255, 255, 255, 0.05); 
@@ -58,6 +102,8 @@
         button:hover { background: #2563eb; transform: translateY(-2px); }
         .btn-secondary { background: #10b981; }
         .btn-secondary:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; }
+        .btn-warning:hover { background: #d97706; }
 
         #status { margin-top: 15px; font-size: 14px; font-weight: bold; }
         .success { color: #10b981; }
@@ -81,7 +127,7 @@
 
         .gallery-grid { 
             display: grid; 
-            grid-template-columns: repeat(3, 1fr); /* 3 Columns */
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px; 
         }
 
@@ -128,7 +174,7 @@
         }
         .delete-btn:hover { background: #dc2626; transform: scale(1.1); }
 
-        /* --- MODAL (Popup for URL) --- */
+        /* --- MODAL --- */
         .modal {
             display: none;
             position: fixed;
@@ -174,9 +220,25 @@
             word-break: break-all;
         }
 
-        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         .btn-close { background: #475569; }
         .btn-close:hover { background: #334155; }
+
+        /* Change Password Modal */
+        .pwd-input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 12px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+        .pwd-input::placeholder { letter-spacing: normal; font-size: 13px; }
 
         /* Responsive */
         @media (max-width: 768px) { 
@@ -190,22 +252,36 @@
 </head>
 <body>
 
-    <div class="control-panel">
-        <h2 style="margin-bottom: 20px;">📸 My ImageKit Gallery</h2>
-        <input type="file" id="fileInput" accept="image/*">
-        <div class="btn-group">
-            <button onclick="uploadImage()">☁️ Upload Image</button>
-            <button class="btn-secondary" onclick="loadGallery()">🔄 Load Images</button>
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h2>🔒 Enter Password</h2>
+            <input type="password" id="loginPassword" maxlength="4" inputmode="numeric" placeholder="4-digit password" autocomplete="off">
+            <button onclick="verifyLogin()">Login</button>
+            <div class="login-error" id="loginError"></div>
         </div>
-        <div id="status"></div>
     </div>
 
-    <div class="gallery-section" id="gallerySection">
-        <div class="gallery-title">Gallery</div>
-        <div class="gallery-grid" id="galleryGrid"></div>
+    <!-- MAIN APP -->
+    <div id="mainApp">
+        <div class="control-panel">
+            <h2 style="margin-bottom: 20px;">📸 My ImageKit Gallery</h2>
+            <input type="file" id="fileInput" accept="image/*">
+            <div class="btn-group">
+                <button onclick="uploadImage()">☁️ Upload Image</button>
+                <button class="btn-secondary" onclick="loadGallery()">🔄 Load Images</button>
+                <button class="btn-warning" onclick="openChangePwdModal()">🔑 Change Password</button>
+            </div>
+            <div id="status"></div>
+        </div>
+
+        <div class="gallery-section" id="gallerySection">
+            <div class="gallery-title">Gallery</div>
+            <div class="gallery-grid" id="galleryGrid"></div>
+        </div>
     </div>
 
-    <!-- Modal (Popup) -->
+    <!-- Image URL Modal -->
     <div class="modal" id="urlModal">
         <div class="modal-content">
             <img id="modalImage" src="" alt="Preview">
@@ -218,7 +294,131 @@
         </div>
     </div>
 
+    <!-- Change Password Modal -->
+    <div class="modal" id="pwdModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px; font-size: 18px;">🔑 Change Password</h3>
+            <input type="password" id="oldPwd" class="pwd-input" maxlength="4" inputmode="numeric" placeholder="Old password">
+            <input type="password" id="newPwd" class="pwd-input" maxlength="4" inputmode="numeric" placeholder="New 4-digit password">
+            <input type="password" id="confirmPwd" class="pwd-input" maxlength="4" inputmode="numeric" placeholder="Confirm new password">
+            <div class="login-error" id="pwdError"></div>
+            <div class="modal-btns" style="margin-top: 10px;">
+                <button onclick="changePassword()">✅ Update</button>
+                <button class="btn-close" onclick="closePwdModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // ---------- LOGIN / PASSWORD ----------
+        let currentPassword = null;
+
+        async function fetchPassword() {
+            try {
+                const res = await fetch('/api/password.json?t=' + Date.now(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('Password file not found');
+                const data = await res.json();
+                return String(data.password);
+            } catch (e) {
+                console.error('Password load error:', e);
+                return null;
+            }
+        }
+
+        async function verifyLogin() {
+            const input = document.getElementById('loginPassword').value.trim();
+            const errDiv = document.getElementById('loginError');
+            errDiv.textContent = '';
+
+            if (input.length !== 4 || !/^\d{4}$/.test(input)) {
+                errDiv.textContent = 'Please enter a valid 4-digit password';
+                return;
+            }
+
+            errDiv.textContent = '⏳ Verifying...';
+            const stored = await fetchPassword();
+
+            if (stored === null) {
+                errDiv.textContent = '❌ Could not load password. Check api/password.json';
+                return;
+            }
+
+            if (input === stored) {
+                currentPassword = stored;
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'flex';
+                loadGallery();
+            } else {
+                errDiv.textContent = '❌ Wrong password';
+                document.getElementById('loginPassword').value = '';
+            }
+        }
+
+        // Enter key on login
+        document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyLogin();
+        });
+
+        // ---------- CHANGE PASSWORD ----------
+        function openChangePwdModal() {
+            document.getElementById('oldPwd').value = '';
+            document.getElementById('newPwd').value = '';
+            document.getElementById('confirmPwd').value = '';
+            document.getElementById('pwdError').textContent = '';
+            document.getElementById('pwdModal').style.display = 'flex';
+        }
+
+        function closePwdModal() {
+            document.getElementById('pwdModal').style.display = 'none';
+        }
+
+        async function changePassword() {
+            const oldPwd = document.getElementById('oldPwd').value.trim();
+            const newPwd = document.getElementById('newPwd').value.trim();
+            const confirmPwd = document.getElementById('confirmPwd').value.trim();
+            const errDiv = document.getElementById('pwdError');
+            errDiv.textContent = '';
+
+            if (oldPwd !== currentPassword) {
+                errDiv.textContent = '❌ Old password is incorrect';
+                return;
+            }
+            if (!/^\d{4}$/.test(newPwd)) {
+                errDiv.textContent = '❌ New password must be 4 digits';
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                errDiv.textContent = '❌ Passwords do not match';
+                return;
+            }
+
+            errDiv.textContent = '⏳ Updating...';
+
+            try {
+                const res = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ oldPassword: oldPwd, newPassword: newPwd })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.error || 'Failed to update password');
+                }
+
+                currentPassword = newPwd;
+                errDiv.style.color = '#10b981';
+                errDiv.textContent = '✅ Password updated!';
+                setTimeout(() => {
+                    closePwdModal();
+                    errDiv.style.color = '#ef4444';
+                }, 1200);
+            } catch (e) {
+                errDiv.textContent = '❌ ' + e.message;
+            }
+        }
+
+        // ---------- EXISTING GALLERY LOGIC ----------
         async function handleResponse(response) {
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) {
@@ -291,8 +491,6 @@
             images.forEach((item) => {
                 const card = document.createElement('div');
                 card.className = 'image-card';
-                
-                // Image par click karne se modal khulega
                 card.onclick = () => openModal(item.url);
 
                 card.innerHTML = `
@@ -303,7 +501,6 @@
             });
         }
 
-        // Modal Functions
         function openModal(url) {
             document.getElementById('modalImage').src = url;
             document.getElementById('modalUrlInput').value = url;
@@ -326,7 +523,6 @@
             });
         }
 
-        // Delete Image
         async function deleteImage(fileId) {
             if(!confirm("Delete this image permanently from ImageKit?")) return;
             const statusDiv = document.getElementById('status');
@@ -344,16 +540,12 @@
             }
         }
 
-        // Close modal if clicked outside
         window.onclick = function(event) {
             const modal = document.getElementById('urlModal');
+            const pwdModal = document.getElementById('pwdModal');
             if (event.target === modal) closeModal();
+            if (event.target === pwdModal) closePwdModal();
         }
-
-        // Load images on page start
-        window.onload = function() {
-            loadGallery();
-        };
     </script>
 </body>
 </html>
