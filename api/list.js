@@ -1,11 +1,10 @@
-// api/list.js
-import { config } from '../config.js';
-
 export default async function handler(req, res) {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
+    // APNI PRIVATE KEY YAHAN DAALEIN
+    const privateKey = "private_OBhaXibMoYiOEHfSS2u1zOvHOgI=";
+
     try {
-        const privateKey = config.IMAGEKIT_PRIVATE_KEY;
         const response = await fetch('https://api.imagekit.io/v1/files?limit=100', {
             method: 'GET',
             headers: {
