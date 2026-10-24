@@ -15,8 +15,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "env": {
-    "IMAGEKIT_PRIVATE_KEY": "@imagekit_private_key"
-  }
+  ]
 }
