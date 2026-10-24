@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ImageKit 3D Gallery</title>
+    <title>ImageKit Gallery</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
         body { 
-            background: #0f172a; /* Dark professional theme */
+            background: #0f172a; 
             color: #fff;
             min-height: 100vh; 
             padding: 20px 15px; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
         }
 
-        /* Control Panel (Upload/Delete) */
+        /* Control Panel */
         .control-panel { 
             background: rgba(255, 255, 255, 0.05); 
             backdrop-filter: blur(10px);
@@ -27,10 +26,9 @@
             border-radius: 15px; 
             border: 1px solid rgba(255, 255, 255, 0.1);
             width: 100%;
-            max-width: 600px;
+            max-width: 900px;
             text-align: center;
             margin-bottom: 30px;
-            z-index: 10;
         }
 
         input[type="file"] {
@@ -60,109 +58,167 @@
         button:hover { background: #2563eb; transform: translateY(-2px); }
         .btn-secondary { background: #10b981; }
         .btn-secondary:hover { background: #059669; }
-        .btn-purple { background: #8b5cf6; }
-        .btn-purple:hover { background: #7c3aed; }
 
         #status { margin-top: 15px; font-size: 14px; font-weight: bold; }
         .success { color: #10b981; }
         .error { color: #ef4444; }
 
-        /* --- 3D CAROUSEL CSS --- */
-        .scene {
+        /* --- GRID LAYOUT --- */
+        .gallery-section {
             width: 100%;
-            height: 400px;
-            perspective: 1200px;
+            max-width: 900px;
+            display: none;
+        }
+
+        .gallery-title { 
+            font-size: 18px; 
+            font-weight: 600; 
+            margin-bottom: 15px;
+            color: #e2e8f0;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 10px;
+        }
+
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); /* 3 Columns */
+            gap: 15px; 
+        }
+
+        .image-card { 
+            background: #1e293b; 
+            border: 1px solid #334155; 
+            border-radius: 12px; 
+            padding: 10px; 
+            cursor: pointer;
+            transition: 0.3s;
             position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: visible;
-            margin-top: 20px;
         }
-
-        .carousel {
-            width: 200px;
-            height: 250px;
-            position: absolute;
-            transform-style: preserve-3d;
-            animation: rotate360 25s infinite linear; /* Ghoomne ki speed */
-            transform: rotateY(0deg);
-        }
-
-        /* Jab mouse upar ho toh ghoomna ruk jaye */
-        .scene:hover .carousel {
-            animation-play-state: paused;
-        }
-
-        .carousel-card {
-            position: absolute;
-            width: 200px;
-            height: 250px;
-            left: 0;
-            top: 0;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            backface-visibility: visible;
-            transition: border-color 0.3s;
-        }
-
-        .carousel-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .carousel-card:hover {
+        .image-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
             border-color: #3b82f6;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
         }
 
-        /* 3D Rotation Animation */
-        @keyframes rotate360 {
-            from { transform: rotateY(0deg); }
-            to { transform: rotateY(-360deg); }
+        .image-card img { 
+            width: 100%; 
+            height: 150px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            display: block;
         }
 
-        /* Text below carousel */
-        .gallery-hint {
-            margin-top: 20px;
-            color: #94a3b8;
-            font-size: 14px;
-            text-align: center;
+        .delete-btn { 
+            position: absolute; 
+            top: 5px; 
+            right: 5px; 
+            background: #ef4444; 
+            color: white; 
+            border: none; 
+            border-radius: 50%; 
+            width: 28px; 
+            height: 28px; 
+            font-size: 14px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0; 
             z-index: 10;
         }
+        .delete-btn:hover { background: #dc2626; transform: scale(1.1); }
 
+        /* --- MODAL (Popup for URL) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-content img {
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #0f172a;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 15px;
+            outline: none;
+            word-break: break-all;
+        }
+
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .btn-close { background: #475569; }
+        .btn-close:hover { background: #334155; }
+
+        /* Responsive */
+        @media (max-width: 768px) { 
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); } 
+        }
+        @media (max-width: 480px) { 
+            .gallery-grid { grid-template-columns: 1fr; } 
+            .image-card img { height: 200px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Control Panel -->
     <div class="control-panel">
+        <h2 style="margin-bottom: 20px;">📸 My ImageKit Gallery</h2>
         <input type="file" id="fileInput" accept="image/*">
         <div class="btn-group">
-            <button onclick="uploadImage()">Upload Image</button>
-            <button class="btn-secondary" onclick="loadCarousel()">Refresh Gallery</button>
+            <button onclick="uploadImage()">☁️ Upload Image</button>
+            <button class="btn-secondary" onclick="loadGallery()">🔄 Load Images</button>
         </div>
         <div id="status"></div>
     </div>
 
-    <!-- 3D Carousel Section -->
-    <div class="scene" id="scene" style="display: none;">
-        <div class="carousel" id="carousel">
-            <!-- Images will be injected here via JS -->
-        </div>
+    <div class="gallery-section" id="gallerySection">
+        <div class="gallery-title">Gallery</div>
+        <div class="gallery-grid" id="galleryGrid"></div>
     </div>
-    
-    <div class="gallery-hint" id="hintText" style="display: none;">
-        3D Gallery • Hover to Pause • Swipe/Scroll on mobile
+
+    <!-- Modal (Popup) -->
+    <div class="modal" id="urlModal">
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Preview">
+            <h3 style="margin-bottom: 10px; font-size: 16px;">Image URL</h3>
+            <input type="text" id="modalUrlInput" class="url-input" readonly>
+            <div class="modal-btns">
+                <button onclick="copyModalUrl()">📋 Copy URL</button>
+                <button class="btn-close" onclick="closeModal()">Close</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        let carouselItems = [];
-        let isAnimating = true;
-
         async function handleResponse(response) {
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) {
@@ -170,7 +226,7 @@
                 if (!response.ok) throw new Error(data.error || `HTTP Error: ${response.status}`);
                 return data;
             } else {
-                throw new Error("Server error. Check Vercel logs.");
+                throw new Error("Server error. Please check Vercel logs.");
             }
         }
 
@@ -186,80 +242,117 @@
             formData.append('file', file);
             formData.append('fileName', file.name);
 
-            statusDiv.innerHTML = 'Uploading...';
+            statusDiv.innerHTML = '⏳ Uploading...';
             statusDiv.className = '';
 
             try {
                 const response = await fetch('/api/upload', { method: 'POST', body: formData });
                 await handleResponse(response);
-                statusDiv.innerHTML = '✅ Uploaded successfully!';
+                statusDiv.innerHTML = '✅ Image Uploaded Successfully!';
                 statusDiv.className = 'success';
                 fileInput.value = "";
-                loadCarousel(); // Refresh carousel after upload
+                loadGallery(); 
             } catch (error) {
                 statusDiv.innerHTML = `❌ Error: ${error.message}`;
                 statusDiv.className = 'error';
             }
         }
 
-        async function loadCarousel() {
+        async function loadGallery() {
             const statusDiv = document.getElementById('status');
-            statusDiv.innerHTML = '⏳ Loading 3D Gallery...';
+            statusDiv.innerHTML = '⏳ Loading images...';
             statusDiv.className = '';
 
             try {
                 const response = await fetch('/api/list');
                 const data = await handleResponse(response);
                 
-                if(data.length === 0) {
-                    statusDiv.innerHTML = 'No images found in ImageKit.';
-                    return;
-                }
-
-                statusDiv.innerHTML = '';
-                render3DCarousel(data);
+                statusDiv.innerHTML = `✅ ${data.length} Images Loaded!`;
+                statusDiv.className = 'success';
+                renderGrid(data);
             } catch (error) {
                 statusDiv.innerHTML = `❌ Error: ${error.message}`;
                 statusDiv.className = 'error';
             }
         }
 
-        function render3DCarousel(images) {
-            const carousel = document.getElementById('carousel');
-            const scene = document.getElementById('scene');
-            const hintText = document.getElementById('hintText');
+        function renderGrid(images) {
+            const grid = document.getElementById('galleryGrid');
+            const section = document.getElementById('gallerySection');
+            grid.innerHTML = "";
+
+            if (images.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
             
-            carousel.innerHTML = ""; // Clear existing
-            scene.style.display = 'flex';
-            hintText.style.display = 'block';
+            section.style.display = 'block';
 
-            const totalItems = images.length;
-            // Agar images kam hain toh radius chota rakhein
-            const radius = totalItems > 4 ? 350 : (totalItems * 80); 
-
-            images.forEach((item, index) => {
+            images.forEach((item) => {
                 const card = document.createElement('div');
-                card.className = 'carousel-card';
+                card.className = 'image-card';
                 
-                // Calculate angle for each image
-                const angle = (360 / totalItems) * index;
-                // Push image outwards by radius
-                card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+                // Image par click karne se modal khulega
+                card.onclick = () => openModal(item.url);
 
                 card.innerHTML = `
+                    <button class="delete-btn" onclick="event.stopPropagation(); deleteImage('${item.fileId}')">✕</button>
                     <img src="${item.url}" alt="Image" loading="lazy">
                 `;
-                carousel.appendChild(card);
+                grid.appendChild(card);
             });
-
-            // Adjust animation speed based on number of images
-            const speed = Math.max(15, totalItems * 3); 
-            carousel.style.animation = `rotate360 ${speed}s infinite linear`;
         }
 
-        // Load images when page starts
+        // Modal Functions
+        function openModal(url) {
+            document.getElementById('modalImage').src = url;
+            document.getElementById('modalUrlInput').value = url;
+            document.getElementById('urlModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('urlModal').style.display = 'none';
+        }
+
+        function copyModalUrl() {
+            const urlInput = document.getElementById('modalUrlInput');
+            urlInput.select();
+            navigator.clipboard.writeText(urlInput.value).then(() => {
+                const statusDiv = document.getElementById('status');
+                statusDiv.innerHTML = '📋 URL Copied!';
+                statusDiv.className = 'success';
+                closeModal();
+                setTimeout(() => { statusDiv.innerHTML = ''; }, 2000);
+            });
+        }
+
+        // Delete Image
+        async function deleteImage(fileId) {
+            if(!confirm("Delete this image permanently from ImageKit?")) return;
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '⏳ Deleting...';
+            
+            try {
+                const response = await fetch(`/api/delete?fileId=${fileId}`, { method: 'DELETE' });
+                await handleResponse(response);
+                statusDiv.innerHTML = '✅ Image Deleted!';
+                statusDiv.className = 'success';
+                loadGallery(); 
+            } catch (error) {
+                statusDiv.innerHTML = `❌ Delete Error: ${error.message}`;
+                statusDiv.className = 'error';
+            }
+        }
+
+        // Close modal if clicked outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('urlModal');
+            if (event.target === modal) closeModal();
+        }
+
+        // Load images on page start
         window.onload = function() {
-            loadCarousel();
+            loadGallery();
         };
     </script>
 </body>
