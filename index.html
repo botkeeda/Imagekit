@@ -315,8 +315,9 @@
 
         async function fetchPassword() {
             try {
-                const res = await fetch('/api/password.json?t=' + Date.now(), { cache: 'no-store' });
-                if (!res.ok) throw new Error('Password file not found');
+                // Yahan /api/password use kiya hai (bina .json ke)
+                const res = await fetch('/api/password?t=' + Date.now(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('Password API not found');
                 const data = await res.json();
                 return String(data.password);
             } catch (e) {
@@ -339,7 +340,7 @@
             const stored = await fetchPassword();
 
             if (stored === null) {
-                errDiv.textContent = '❌ Could not load password. Check api/password.json';
+                errDiv.textContent = '❌ Could not load password. Check api/password.js';
                 return;
             }
 
