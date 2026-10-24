@@ -9,13 +9,13 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
         body { 
-            background: #09090b; /* Simple dark background */
+            background: #09090b;
             color: #fff;
             min-height: 100vh; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden;
+            overflow: hidden; /* Scrollbar hide karne ke liye */
         }
 
         .header {
@@ -38,38 +38,36 @@
             font-weight: 400;
         }
 
-        /* Container for the simple straight slider */
+        /* Slider Container */
         .slider-container {
             width: 100%;
-            max-width: 100vw;
             height: 60vh;
             display: flex;
             align-items: center;
-            justify-content: center;
             overflow: hidden;
             position: relative;
             margin-top: 20px;
         }
 
-        /* The track that holds images and moves smoothly */
+        /* The line track */
         .slider-track {
             display: flex;
-            gap: 20px; /* Space between images */
-            padding: 20px;
-            transition: transform 0.8s ease-in-out; /* Smooth scroll */
+            gap: 30px;
+            padding: 0 50vw; /* Shuru mein center karne ke liye padding */
+            transition: transform 0.8s ease-in-out;
             will-change: transform;
         }
 
-        /* Simple Image Card */
+        /* Image Cards */
         .slide-card {
-            width: 280px;
-            height: 380px;
+            width: 260px;
+            height: 360px;
             border-radius: 12px;
             overflow: hidden;
             flex-shrink: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             background: #18181b;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
             border: 2px solid transparent;
         }
 
@@ -80,14 +78,14 @@
             display: block;
         }
 
-        /* Simple highlight for the center image */
+        /* Center image highlight */
         .slide-card.active {
-            transform: scale(1.02);
             border-color: #3b82f6;
-            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+            transform: scale(1.05); /* Center wali thodi badi */
         }
 
-        /* Progress dots at the bottom */
+        /* Progress Dots */
         .progress-container {
             position: absolute;
             bottom: 30px;
@@ -104,8 +102,9 @@
         }
         .dot.active {
             background: #3b82f6;
-            width: 20px;
+            width: 24px;
             border-radius: 4px;
+            box-shadow: 0 0 10px #3b82f6;
         }
 
         #loader {
@@ -119,9 +118,8 @@
             z-index: 20;
         }
 
-        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .slide-card { width: 240px; height: 340px; }
+            .slide-card { width: 220px; height: 320px; }
             .header h1 { font-size: 26px; }
         }
     </style>
@@ -145,9 +143,8 @@
         let currentIndex = 0;
         let autoPlayInterval = null;
         
-        const SLIDE_TIME = 2500; // Time each image stays in center (2.5 seconds)
+        const SLIDE_TIME = 3000; // Har 3 second mein agli image
 
-        // Shuffle array for random order (waisa hi rakha hai)
         function shuffle(array) {
             let currentIndex = array.length, randomIndex;
             while (currentIndex != 0) {
@@ -158,7 +155,6 @@
             return array;
         }
 
-        // Build UI
         function initSlider() {
             const track = document.getElementById('sliderTrack');
             const progress = document.getElementById('progress');
@@ -166,23 +162,21 @@
             progress.innerHTML = '';
 
             images.forEach((item, index) => {
-                // Create Image Card
                 const card = document.createElement('div');
                 card.className = 'slide-card' + (index === 0 ? ' active' : '');
                 card.innerHTML = `<img src="${item.url}" alt="Project Image">`;
                 track.appendChild(card);
 
-                // Create Dot
                 const dot = document.createElement('div');
                 dot.className = 'dot' + (index === 0 ? ' active' : '');
                 progress.appendChild(dot);
             });
 
-            moveToSlide(0);
+            // Shuru mein pehli image center karne ke liye thoda delay
+            setTimeout(() => moveToSlide(0), 100);
             startAutoPlay();
         }
 
-        // Function to slide smoothly line by line
         function moveToSlide(index) {
             const track = document.getElementById('sliderTrack');
             const cards = document.querySelectorAll('.slide-card');
@@ -191,41 +185,37 @@
 
             if (cards.length === 0) return;
 
-            // Remove active class from all
+            // Highlight update
             cards.forEach(c => c.classList.remove('active'));
             dots.forEach(d => d.classList.remove('active'));
-
-            // Add active class to current center image
             cards[index].classList.add('active');
             dots[index].classList.add('active');
 
-            // Math to calculate exact center position
+            // Position calculation (Bilkul straight line center)
             const cardWidth = cards[index].offsetWidth;
-            const gap = 20; // Same as CSS gap
+            const gap = 30; 
             const containerWidth = container.offsetWidth;
             
             const offset = (cardWidth + gap) * index;
             const centerOffset = (containerWidth / 2) - (cardWidth / 2);
             
-            // Smooth translateX movement
             track.style.transform = `translateX(${centerOffset - offset}px)`;
             
             currentIndex = index;
         }
 
-        // Auto Play Logic
         function startAutoPlay() {
             if (autoPlayInterval) clearInterval(autoPlayInterval);
             autoPlayInterval = setInterval(() => {
                 let nextIndex = currentIndex + 1;
+                // Agar end par pohanch jaye toh wapis shuru se chalu ho
                 if (nextIndex >= images.length) {
-                    nextIndex = 0; // Loop back to start
+                    nextIndex = 0; 
                 }
                 moveToSlide(nextIndex);
             }, SLIDE_TIME);
         }
 
-        // Fetch Data (API code waisa hi hai)
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
@@ -256,7 +246,7 @@
             }
         }
 
-        // Pause on hover
+        // Hover karne par pause ho jaye
         document.getElementById('sliderContainer').addEventListener('mouseenter', () => {
             clearInterval(autoPlayInterval);
         });
