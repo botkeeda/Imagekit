@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
         body { 
-            background: #09090b;
+            background: radial-gradient(circle at 50% 40%, #131318 0%, #09090b 70%);
             color: #fff;
             min-height: 100vh; 
             display: flex;
@@ -40,135 +40,140 @@
 
         .scene {
             width: 100%;
-            height: 60vh;
-            margin-top: 50px;
-            perspective: 1200px;
+            flex: 1;
+            perspective: 1400px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
         }
 
-        .carousel {
-            width: 200px;
-            height: 280px;
+        .stage {
             position: relative;
+            width: 320px;
+            height: 440px;
             transform-style: preserve-3d;
-            transform: rotateX(-10deg);
         }
 
-        /* Random 3D animation classes — JS will pick one each reload */
-        .anim-rotate360 {
-            animation: rotate360 30s infinite linear;
-        }
-        .anim-tilt-flip {
-            animation: tiltFlip 28s infinite linear;
-        }
-        .anim-wave-spin {
-            animation: waveSpin 32s infinite linear;
-        }
-        .anim-pulse-rotate {
-            animation: pulseRotate 26s infinite ease-in-out;
-        }
-        .anim-float-spin {
-            animation: floatSpin 34s infinite linear;
-        }
-        .anim-orbit {
-            animation: orbitSpin 30s infinite linear;
-        }
-        .anim-twist {
-            animation: twistSpin 29s infinite linear;
-        }
-        .anim-helix {
-            animation: helixSpin 33s infinite linear;
-        }
-
-        .scene:hover .carousel {
-            animation-play-state: paused;
-        }
-
-        @keyframes rotate360 {
-            from { transform: rotateX(-10deg) rotateY(0deg); }
-            to { transform: rotateX(-10deg) rotateY(-360deg); }
-        }
-
-        @keyframes tiltFlip {
-            0%   { transform: rotateX(-20deg) rotateY(0deg); }
-            50%  { transform: rotateX(20deg) rotateY(-180deg); }
-            100% { transform: rotateX(-20deg) rotateY(-360deg); }
-        }
-
-        @keyframes waveSpin {
-            0%   { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-            25%  { transform: rotateX(15deg) rotateY(-90deg) rotateZ(10deg); }
-            50%  { transform: rotateX(0deg) rotateY(-180deg) rotateZ(0deg); }
-            75%  { transform: rotateX(-15deg) rotateY(-270deg) rotateZ(-10deg); }
-            100% { transform: rotateX(0deg) rotateY(-360deg) rotateZ(0deg); }
-        }
-
-        @keyframes pulseRotate {
-            0%   { transform: rotateX(-10deg) rotateY(0deg) scale(1); }
-            50%  { transform: rotateX(-10deg) rotateY(-180deg) scale(1.15); }
-            100% { transform: rotateX(-10deg) rotateY(-360deg) scale(1); }
-        }
-
-        @keyframes floatSpin {
-            0%   { transform: rotateX(-8deg) rotateY(0deg) translateY(0px); }
-            25%  { transform: rotateX(-8deg) rotateY(-90deg) translateY(-20px); }
-            50%  { transform: rotateX(-8deg) rotateY(-180deg) translateY(0px); }
-            75%  { transform: rotateX(-8deg) rotateY(-270deg) translateY(20px); }
-            100% { transform: rotateX(-8deg) rotateY(-360deg) translateY(0px); }
-        }
-
-        @keyframes orbitSpin {
-            0%   { transform: rotateX(-15deg) rotateY(0deg) rotateZ(0deg); }
-            100% { transform: rotateX(-15deg) rotateY(-360deg) rotateZ(-30deg); }
-        }
-
-        @keyframes twistSpin {
-            0%   { transform: rotateX(-10deg) rotateY(0deg) rotateZ(0deg); }
-            50%  { transform: rotateX(10deg) rotateY(-180deg) rotateZ(180deg); }
-            100% { transform: rotateX(-10deg) rotateY(-360deg) rotateZ(360deg); }
-        }
-
-        @keyframes helixSpin {
-            0%   { transform: rotateX(-5deg) rotateY(0deg) skewX(0deg); }
-            25%  { transform: rotateX(-5deg) rotateY(-90deg) skewX(5deg); }
-            50%  { transform: rotateX(-5deg) rotateY(-180deg) skewX(0deg); }
-            75%  { transform: rotateX(-5deg) rotateY(-270deg) skewX(-5deg); }
-            100% { transform: rotateX(-5deg) rotateY(-360deg) skewX(0deg); }
-        }
-
-        .carousel-card {
+        .showcase-card {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            border-radius: 12px;
+            inset: 0;
+            border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75),
+                        0 0 0 1px rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             background: #18181b;
-            transition: border-color 0.3s;
+            opacity: 0;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            will-change: transform, opacity;
         }
 
-        .carousel-card img {
+        .showcase-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.8;
-            transition: opacity 0.3s, transform 0.3s;
+            display: block;
         }
 
-        .carousel-card:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+        .showcase-card .glow {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.55) 100%);
+            pointer-events: none;
         }
 
-        .carousel-card:hover img {
-            opacity: 1;
-            transform: scale(1.05);
+        /* ============ ENTRY ANIMATIONS (random per image) ============ */
+
+        /* 1. Flip in from left */
+        .in-flip-left {
+            animation: inFlipLeft 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes inFlipLeft {
+            0%   { opacity: 0; transform: translateX(-120%) rotateY(90deg) scale(0.7); }
+            100% { opacity: 1; transform: translateX(0) rotateY(0deg) scale(1); }
+        }
+
+        /* 2. Flip in from right */
+        .in-flip-right {
+            animation: inFlipRight 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes inFlipRight {
+            0%   { opacity: 0; transform: translateX(120%) rotateY(-90deg) scale(0.7); }
+            100% { opacity: 1; transform: translateX(0) rotateY(0deg) scale(1); }
+        }
+
+        /* 3. Rise up + tilt */
+        .in-rise {
+            animation: inRise 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes inRise {
+            0%   { opacity: 0; transform: translateY(140px) rotateX(45deg) scale(0.8); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
+        }
+
+        /* 4. Zoom spin */
+        .in-zoom-spin {
+            animation: inZoomSpin 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes inZoomSpin {
+            0%   { opacity: 0; transform: scale(0.2) rotateZ(-35deg) rotateY(60deg); }
+            100% { opacity: 1; transform: scale(1) rotateZ(0deg) rotateY(0deg); }
+        }
+
+        /* 5. Drop from top */
+        .in-drop {
+            animation: inDrop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes inDrop {
+            0%   { opacity: 0; transform: translateY(-160px) rotateX(-70deg); }
+            100% { opacity: 1; transform: translateY(0) rotateX(0deg); }
+        }
+
+        /* 6. Swing in */
+        .in-swing {
+            animation: inSwing 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes inSwing {
+            0%   { opacity: 0; transform: rotateZ(-25deg) rotateY(70deg) scale(0.6); transform-origin: top center; }
+            100% { opacity: 1; transform: rotateZ(0deg) rotateY(0deg) scale(1); transform-origin: top center; }
+        }
+
+        /* 7. Depth push */
+        .in-depth {
+            animation: inDepth 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes inDepth {
+            0%   { opacity: 0; transform: translateZ(-900px) rotateY(30deg); }
+            100% { opacity: 1; transform: translateZ(0) rotateY(0deg); }
+        }
+
+        /* 8. Skew reveal */
+        .in-skew {
+            animation: inSkew 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes inSkew {
+            0%   { opacity: 0; transform: translateX(80px) skewX(25deg) rotateY(-40deg) scale(0.85); }
+            100% { opacity: 1; transform: translateX(0) skewX(0deg) rotateY(0deg) scale(1); }
+        }
+
+        /* ============ EXIT ANIMATIONS ============ */
+        .out-fade {
+            animation: outFade 0.55s ease forwards;
+        }
+        @keyframes outFade {
+            from { opacity: 1; transform: scale(1) rotateY(0deg); }
+            to   { opacity: 0; transform: scale(0.85) rotateY(35deg); }
+        }
+
+        /* subtle idle floating for premium feel */
+        .idle-float {
+            animation: idleFloat 4s ease-in-out infinite;
+        }
+        @keyframes idleFloat {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50%      { transform: translateY(-12px) rotateX(2deg); }
         }
 
         #loader {
@@ -180,6 +185,29 @@
             font-size: 18px;
             font-weight: 600;
             z-index: 20;
+        }
+
+        .progress {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.4s;
+        }
+        .dot.active {
+            background: #3b82f6;
+            box-shadow: 0 0 12px #3b82f6;
+            width: 26px;
+            border-radius: 6px;
         }
 
     </style>
@@ -194,84 +222,126 @@
     <div id="loader">Fetching Images...</div>
 
     <div class="scene">
-        <div class="carousel" id="carousel">
-        </div>
+        <div class="stage" id="stage"></div>
+        <div class="progress" id="progress"></div>
     </div>
 
     <script>
-        // Random 3D animation picker — different every page reload
-        const animations = [
-            'anim-rotate360',
-            'anim-tilt-flip',
-            'anim-wave-spin',
-            'anim-pulse-rotate',
-            'anim-float-spin',
-            'anim-orbit',
-            'anim-twist',
-            'anim-helix'
+        const entryAnimations = [
+            'in-flip-left',
+            'in-flip-right',
+            'in-rise',
+            'in-zoom-spin',
+            'in-drop',
+            'in-swing',
+            'in-depth',
+            'in-skew'
         ];
 
-        function applyRandomAnimation() {
-            const carousel = document.getElementById('carousel');
-            const randomAnim = animations[Math.floor(Math.random() * animations.length)];
-            carousel.classList.add(randomAnim);
+        let images = [];
+        let current = 0;
+        let timer = null;
+        const SLIDE_TIME = 3200;      // time each image stays
+        const EXIT_TIME = 550;        // exit anim duration
+
+        function shuffle(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function buildDots(total) {
+            const progress = document.getElementById('progress');
+            progress.innerHTML = '';
+            for (let i = 0; i < total; i++) {
+                const d = document.createElement('div');
+                d.className = 'dot' + (i === 0 ? ' active' : '');
+                progress.appendChild(d);
+            }
+        }
+
+        function updateDots(idx) {
+            document.querySelectorAll('.dot').forEach((d, i) => {
+                d.classList.toggle('active', i === idx);
+            });
+        }
+
+        function showNext() {
+            const stage = document.getElementById('stage');
+            const oldCard = stage.querySelector('.showcase-card');
+            const animClass = entryAnimations[Math.floor(Math.random() * entryAnimations.length)];
+
+            const item = images[current];
+
+            // Build new card
+            const card = document.createElement('div');
+            card.className = 'showcase-card ' + animClass;
+            card.innerHTML = `
+                <img src="${item.url}" alt="Project">
+                <div class="glow"></div>
+            `;
+            stage.appendChild(card);
+
+            // Remove exit of old card
+            if (oldCard) {
+                oldCard.classList.remove(...entryAnimations);
+                oldCard.classList.add('out-fade');
+                setTimeout(() => oldCard.remove(), EXIT_TIME);
+            }
+
+            // After entry animation, add subtle idle float
+            setTimeout(() => {
+                card.classList.remove(animClass);
+                card.style.opacity = '1';
+                card.style.transform = 'none';
+                card.classList.add('idle-float');
+            }, 1050);
+
+            updateDots(current);
+
+            current = (current + 1) % images.length;
+        }
+
+        function startLoop() {
+            showNext();
+            timer = setInterval(showNext, SLIDE_TIME);
         }
 
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
-                
                 const contentType = response.headers.get("content-type");
                 if (!contentType || !contentType.includes("application/json")) {
                     throw new Error("Server did not return JSON.");
                 }
 
                 const data = await response.json();
-                const carousel = document.getElementById('carousel');
                 const loader = document.getElementById('loader');
                 const subtitle = document.getElementById('subtitle');
 
                 loader.style.display = 'none';
 
-                if (data.length === 0) {
+                if (!data || data.length === 0) {
                     subtitle.innerText = "No images found.";
                     return;
                 }
 
-                subtitle.innerText = `Rotating 3D Preview (${data.length} Images)`;
+                images = shuffle(data);   // random order each load
+                subtitle.innerText = `Cinematic 3D Showcase (${images.length} Images)`;
 
-                const totalItems = data.length;
-                const cardWidth = 200;
-                
-                let radius = (cardWidth / 2) / Math.tan(Math.PI / totalItems);
-                if (totalItems < 4) radius = 300;
-
-                const angleStep = 360 / totalItems;
-
-                data.forEach((item, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'carousel-card';
-                    
-                    const angle = index * angleStep;
-                    card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-
-                    card.innerHTML = `
-                        <img src="${item.url}" alt="Image" loading="lazy">
-                    `;
-                    carousel.appendChild(card);
-                });
-
-                // Apply random 3D animation after cards are built
-                applyRandomAnimation();
+                buildDots(images.length);
+                startLoop();
 
             } catch (error) {
-                document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
+                document.getElementById('loader').innerHTML =
+                    `<span style="color:#ef4444;">Error: ${error.message}</span>`;
             }
         }
 
-        window.onload = function() {
-            loadImages();
-        };
+        window.onload = loadImages;
     </script>
 </body>
 </html>
