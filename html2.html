@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Showcase</title>
+    <title>3D Project Showcase</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
@@ -15,10 +15,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow: hidden; /* Hide scrollbars */
+            overflow: hidden;
         }
 
-        /* Header styling */
         .header {
             text-align: center;
             margin-top: 40px;
@@ -39,7 +38,6 @@
             font-weight: 400;
         }
 
-        /* Live Button at bottom */
         .live-badge {
             position: absolute;
             bottom: 30px;
@@ -61,56 +59,72 @@
         .live-dot {
             width: 8px;
             height: 8px;
-            background: #3b82f6; /* Blue dot */
+            background: #3b82f6;
             border-radius: 50%;
             box-shadow: 0 0 10px #3b82f6;
         }
 
-        /* --- SLIDER CSS (No 3D) --- */
-        .slider-container {
+        .scene {
             width: 100%;
             height: 60vh;
             margin-top: 50px;
+            perspective: 1200px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            overflow: hidden;
         }
 
-        .slide {
+        .carousel {
+            width: 200px;
+            height: 280px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate360 30s infinite linear;
+            transform: rotateX(-10deg);
+        }
+
+        .scene:hover .carousel {
+            animation-play-state: paused;
+        }
+
+        .carousel-card {
             position: absolute;
-            width: 260px; /* Image size */
-            height: 360px;
-            border-radius: 15px;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
             border: 2px solid rgba(255, 255, 255, 0.1);
             background: #18181b;
-            
-            /* Animation for fade in and out */
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            pointer-events: none; /* Click through disabled when hidden */
+            transition: border-color 0.3s;
         }
 
-        /* Active Slide Style */
-        .slide.active {
-            opacity: 1;
-            transform: scale(1);
-            pointer-events: auto; 
-            z-index: 5;
-        }
-
-        .slide img {
+        .carousel-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            opacity: 0.8;
+            transition: opacity 0.3s, transform 0.3s;
         }
 
-        /* Loader */
+        .carousel-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+        }
+
+        .carousel-card:hover img {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        @keyframes rotate360 {
+            from { transform: rotateX(-10deg) rotateY(0deg); }
+            to { transform: rotateX(-10deg) rotateY(-360deg); }
+        }
+
         #loader {
             position: absolute;
             top: 50%;
@@ -126,31 +140,24 @@
 </head>
 <body>
 
-    <!-- Header -->
     <div class="header">
         <h1>Project Showcases</h1>
         <p id="subtitle">Loading Gallery...</p>
     </div>
 
-    <!-- Loader -->
     <div id="loader">Fetching Images...</div>
 
-    <!-- Slider Area -->
-    <div class="slider-container" id="slider">
-        <!-- Images will be injected here -->
+    <div class="scene">
+        <div class="carousel" id="carousel">
+        </div>
     </div>
 
-    <!-- Live Button -->
     <div class="live-badge">
         <div class="live-dot"></div>
         LIVE
     </div>
 
     <script>
-        let allImages = [];
-        let currentIndex = 0;
-        let slideInterval;
-
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
@@ -161,60 +168,43 @@
                 }
 
                 const data = await response.json();
-                const slider = document.getElementById('slider');
+                const carousel = document.getElementById('carousel');
                 const loader = document.getElementById('loader');
                 const subtitle = document.getElementById('subtitle');
 
-                loader.style.display = 'none'; // Hide loader
+                loader.style.display = 'none';
 
-                if (!data || data.length === 0) {
+                if (data.length === 0) {
                     subtitle.innerText = "No images found.";
                     return;
                 }
 
-                allImages = data;
-                
-                // Update subtitle count
-                subtitle.innerText = `Showing (${data.length} Images)`;
+                subtitle.innerText = `Rotating 3D Preview (${data.length} Images)`;
 
-                // Create slides for all images
+                const totalItems = data.length;
+                const cardWidth = 200;
+                
+                let radius = (cardWidth / 2) / Math.tan(Math.PI / totalItems);
+                if (totalItems < 4) radius = 300;
+
+                const angleStep = 360 / totalItems;
+
                 data.forEach((item, index) => {
-                    const div = document.createElement('div');
-                    // First image will be active initially
-                    div.className = `slide ${index === 0 ? 'active' : ''}`;
+                    const card = document.createElement('div');
+                    card.className = 'carousel-card';
                     
-                    div.innerHTML = `
+                    const angle = index * angleStep;
+                    card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+
+                    card.innerHTML = `
                         <img src="${item.url}" alt="Image" loading="lazy">
                     `;
-                    slider.appendChild(div);
+                    carousel.appendChild(card);
                 });
-
-                // Start the auto-slide
-                startSlider();
 
             } catch (error) {
                 document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
             }
-        }
-
-        function startSlider() {
-            const slides = document.querySelectorAll('.slide');
-            if (slides.length === 0) return;
-
-            // Clear any existing interval
-            clearInterval(slideInterval);
-
-            // Change image every 3 seconds (3000ms)
-            slideInterval = setInterval(() => {
-                // Remove active class from current
-                slides[currentIndex].classList.remove('active');
-                
-                // Move to next image (loop back to 0 if at end)
-                currentIndex = (currentIndex + 1) % slides.length;
-                
-                // Add active class to next
-                slides[currentIndex].classList.add('active');
-            }, 3000); 
         }
 
         window.onload = function() {
