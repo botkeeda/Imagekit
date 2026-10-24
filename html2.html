@@ -22,6 +22,7 @@
             text-align: center;
             margin-top: 40px;
             z-index: 10;
+            padding: 0 20px;
         }
 
         .header h1 {
@@ -41,26 +42,30 @@
         /* Scene setup for 1 by 1 3D effects */
         .scene {
             width: 100%;
-            height: 65vh;
+            flex: 1;
             perspective: 1200px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
-            margin-top: 20px;
         }
 
-        /* The single image card */
+        /* The single image card - Strictly Centered */
         .showcase-card {
             position: absolute;
-            width: 280px;
-            height: 400px;
+            top: 50%;
+            left: 50%;
+            /* Margin negative lagaya taake hamesha center rahe */
+            margin-top: -190px; /* Half of height */
+            margin-left: -130px; /* Half of width */
+            width: 260px;
+            height: 380px;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9),
                         0 0 0 1px rgba(255, 255, 255, 0.1);
             background: #18181b;
-            opacity: 0; /* Hidden by default, JS will animate */
+            opacity: 0; 
             transform-style: preserve-3d;
             backface-visibility: hidden;
             will-change: transform, opacity;
@@ -89,7 +94,7 @@
             animation: inFlipLeft 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         @keyframes inFlipLeft {
-            0%   { opacity: 0; transform: translateX(-150%) rotateY(90deg) scale(0.8); }
+            0%   { opacity: 0; transform: translateX(-100px) rotateY(90deg) scale(0.8); }
             100% { opacity: 1; transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
@@ -98,7 +103,7 @@
             animation: inFlipRight 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         @keyframes inFlipRight {
-            0%   { opacity: 0; transform: translateX(150%) rotateY(-90deg) scale(0.8); }
+            0%   { opacity: 0; transform: translateX(100px) rotateY(-90deg) scale(0.8); }
             100% { opacity: 1; transform: translateX(0) rotateY(0deg) scale(1); }
         }
 
@@ -107,7 +112,7 @@
             animation: inRise 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         @keyframes inRise {
-            0%   { opacity: 0; transform: translateY(150px) rotateX(45deg) scale(0.8); }
+            0%   { opacity: 0; transform: translateY(100px) rotateX(45deg) scale(0.8); }
             100% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
         }
 
@@ -125,7 +130,7 @@
             animation: inDrop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         @keyframes inDrop {
-            0%   { opacity: 0; transform: translateY(-150px) rotateX(-70deg); }
+            0%   { opacity: 0; transform: translateY(-100px) rotateX(-70deg); }
             100% { opacity: 1; transform: translateY(0) rotateX(0deg); }
         }
 
@@ -143,7 +148,7 @@
             animation: inDepth 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         @keyframes inDepth {
-            0%   { opacity: 0; transform: translateZ(-900px) rotateY(45deg); }
+            0%   { opacity: 0; transform: translateZ(-600px) rotateY(45deg); }
             100% { opacity: 1; transform: translateZ(0) rotateY(0deg); }
         }
 
@@ -152,7 +157,7 @@
             animation: inSkew 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         @keyframes inSkew {
-            0%   { opacity: 0; transform: translateX(100px) skewX(30deg) rotateY(-50deg) scale(0.8); }
+            0%   { opacity: 0; transform: translateX(60px) skewX(30deg) rotateY(-50deg) scale(0.8); }
             100% { opacity: 1; transform: translateX(0) skewX(0deg) rotateY(0deg) scale(1); }
         }
 
@@ -162,22 +167,22 @@
         }
         @keyframes outFade {
             0%   { opacity: 1; transform: scale(1) rotateY(0deg); }
-            100% { opacity: 0; transform: scale(0.85) rotateY(35deg) translateZ(100px); }
+            100% { opacity: 0; transform: scale(0.8) rotateY(35deg) translateZ(100px); }
         }
 
-        /* Idle floating effect (Premium feel) */
+        /* Idle floating effect - FIXED to stay center */
         .idle-float {
             animation: idleFloat 4s ease-in-out infinite alternate;
         }
         @keyframes idleFloat {
             0%   { transform: translateY(0px) rotateX(2deg) rotateY(-2deg); }
-            100% { transform: translateY(-10px) rotateX(-2deg) rotateY(2deg); }
+            100% { transform: translateY(-8px) rotateX(-2deg) rotateY(2deg); }
         }
 
         /* Progress Dots */
         .progress {
             position: absolute;
-            bottom: 40px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -194,7 +199,7 @@
         .dot.active {
             background: #3b82f6;
             box-shadow: 0 0 12px #3b82f6;
-            width: 26px;
+            width: 24px;
             border-radius: 6px;
         }
 
@@ -207,6 +212,16 @@
             font-size: 18px;
             font-weight: 600;
             z-index: 20;
+        }
+
+        /* Mobile adjustments for perfect center */
+        @media (max-width: 768px) {
+            .showcase-card {
+                width: 240px;
+                height: 350px;
+                margin-top: -175px; /* Half of height */
+                margin-left: -120px; /* Half of width */
+            }
         }
     </style>
 </head>
@@ -225,7 +240,6 @@
     </div>
 
     <script>
-        // List of 8 different 3D effects
         const entryAnimations = [
             'in-flip-left',
             'in-flip-right',
@@ -241,10 +255,9 @@
         let current = 0;
         let timer = null;
         
-        const SLIDE_TIME = 3500; // Time each image stays on screen (3.5 seconds)
-        const EXIT_TIME = 600;   // Time taken by exit animation
+        const SLIDE_TIME = 3500; 
+        const EXIT_TIME = 600;   
 
-        // Shuffle images for random order
         function shuffle(arr) {
             const a = arr.slice();
             for (let i = a.length - 1; i > 0; i--) {
@@ -254,7 +267,6 @@
             return a;
         }
 
-        // Create dots
         function buildDots(total) {
             const progress = document.getElementById('progress');
             progress.innerHTML = '';
@@ -265,23 +277,19 @@
             }
         }
 
-        // Update dots
         function updateDots(idx) {
             document.querySelectorAll('.dot').forEach((d, i) => {
                 d.classList.toggle('active', i === idx);
             });
         }
 
-        // Show 1 image with random effect
         function showNext() {
             const stage = document.getElementById('stage');
             const oldCard = stage.querySelector('.showcase-card');
             
-            // Pick random effect
             const animClass = entryAnimations[Math.floor(Math.random() * entryAnimations.length)];
             const item = images[current];
 
-            // Create new card
             const card = document.createElement('div');
             card.className = 'showcase-card ' + animClass;
             card.innerHTML = `
@@ -290,32 +298,30 @@
             `;
             stage.appendChild(card);
 
-            // Remove old card
             if (oldCard) {
                 oldCard.classList.remove(...entryAnimations, 'idle-float');
                 oldCard.classList.add('out-fade');
                 setTimeout(() => oldCard.remove(), EXIT_TIME);
             }
 
-            // After entry animation completes, add idle float
+            // Entry animation ke baad card ko strictly center aur float state mein lana
             setTimeout(() => {
                 card.classList.remove(animClass);
                 card.style.opacity = '1';
-                card.style.transform = 'none'; // reset transforms for float
+                // Transform reset taake side pe na jaye
+                card.style.transform = 'translate(0, 0)'; 
                 card.classList.add('idle-float');
-            }, 1050); // 1s animation + 50ms buffer
+            }, 1050); 
 
             updateDots(current);
             current = (current + 1) % images.length;
         }
 
-        // Start loop
         function startLoop() {
             showNext();
             timer = setInterval(showNext, SLIDE_TIME);
         }
 
-        // Fetch data from API
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
