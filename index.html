@@ -41,7 +41,18 @@
     </div>
 
     <script>
-        // Vercel deploy hone ke baad ye '/api/...' wale routes kaam karenge
+        // Helper function to handle errors safely
+        async function handleResponse(response) {
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || `HTTP Error: ${response.status}`);
+                return data;
+            } else {
+                throw new Error(`API route galat kaam kar raha hai. Server ne HTML bheja hai (Status: ${response.status})`);
+            }
+        }
+
         async function uploadImage() {
             const fileInput = document.getElementById('fileInput');
             const statusDiv = document.getElementById('status');
@@ -59,16 +70,13 @@
 
             try {
                 const response = await fetch('/api/upload', { method: 'POST', body: formData });
-                const data = await response.json();
-                if (response.ok) {
-                    statusDiv.innerHTML = '<span class="success">Image Upload Ho Gayi!</span>';
-                    fileInput.value = "";
-                    loadAllImages(); 
-                } else {
-                    statusDiv.innerHTML = `<span class="error">Error: ${data.error}</span>`;
-                }
+                await handleResponse(response); // JSON check
+                
+                statusDiv.innerHTML = '<span class="success">Image Upload Ho Gayi!</span>';
+                fileInput.value = "";
+                loadAllImages(); 
             } catch (error) {
-                statusDiv.innerHTML = `<span class="error">Network Error: ${error.message}</span>`;
+                statusDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
             }
         }
 
@@ -78,15 +86,12 @@
             statusDiv.className = '';
             try {
                 const response = await fetch('/api/list');
-                const data = await response.json();
-                if (response.ok) {
-                    statusDiv.innerHTML = `<span class="success">${data.length} Images Load Ho Gayi!</span>`;
-                    renderGallery(data);
-                } else {
-                    statusDiv.innerHTML = `<span class="error">Error: ${data.error}</span>`;
-                }
+                const data = await handleResponse(response); // JSON check
+                
+                statusDiv.innerHTML = `<span class="success">${data.length} Images Load Ho Gayi!</span>`;
+                renderGallery(data);
             } catch (error) {
-                statusDiv.innerHTML = `<span class="error">Network Error: ${error.message}</span>`;
+                statusDiv.innerHTML = `<span class="error">Error: ${error.message}</span>`;
             }
         }
 
@@ -118,15 +123,12 @@
             statusDiv.className = '';
             try {
                 const response = await fetch(`/api/delete?fileId=${fileId}`, { method: 'DELETE' });
-                const data = await response.json();
-                if (response.ok) {
-                    statusDiv.innerHTML = '<span class="success">Image Delete Ho Gayi!</span>';
-                    loadAllImages(); 
-                } else {
-                    statusDiv.innerHTML = `<span class="error">Delete Error: ${data.error}</span>`;
-                }
+                await handleResponse(response); // JSON check
+                
+                statusDiv.innerHTML = '<span class="success">Image Delete Ho Gayi!</span>';
+                loadAllImages(); 
             } catch (error) {
-                statusDiv.innerHTML = `<span class="error">Network Error: ${error.message}</span>`;
+                statusDiv.innerHTML = `<span class="error">Delete Error: ${error.message}</span>`;
             }
         }
 
