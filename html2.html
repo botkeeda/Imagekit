@@ -9,7 +9,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
         body { 
-            background: radial-gradient(circle at 50% 40%, #131318 0%, #09090b 70%);
+            background: radial-gradient(circle at center, #1a1a20 0%, #09090b 100%);
             color: #fff;
             min-height: 100vh; 
             display: flex;
@@ -40,140 +40,150 @@
 
         .scene {
             width: 100%;
-            flex: 1;
-            perspective: 1400px;
+            height: 65vh;
+            perspective: 1200px;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
+            margin-top: 20px;
         }
 
-        .stage {
-            position: relative;
-            width: 320px;
-            height: 440px;
-            transform-style: preserve-3d;
-        }
-
-        .showcase-card {
+        .tv-card {
             position: absolute;
-            inset: 0;
-            border-radius: 18px;
+            width: 260px;
+            height: 360px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75),
-                        0 0 0 1px rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9),
+                        0 0 0 1px rgba(255, 255, 255, 0.1);
             background: #18181b;
             opacity: 0;
             transform-style: preserve-3d;
             backface-visibility: hidden;
-            will-change: transform, opacity;
         }
 
-        .showcase-card img {
+        .tv-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            opacity: 0.95;
+            transition: opacity 0.3s;
         }
 
-        .showcase-card .glow {
+        .tv-card::after {
+            content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.55) 100%);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
             pointer-events: none;
         }
 
-        /* ============ ENTRY ANIMATIONS (random per image) ============ */
+        /* =========================================
+           1 BY 1 RANDOM 3D EFFECTS (TV Screensaver style)
+           ========================================= */
 
-        /* 1. Flip in from left */
-        .in-flip-left {
-            animation: inFlipLeft 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        /* 1. Fly in from deep space */
+        .effect-zoom-in {
+            animation: zoomIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes inFlipLeft {
-            0%   { opacity: 0; transform: translateX(-120%) rotateY(90deg) scale(0.7); }
-            100% { opacity: 1; transform: translateX(0) rotateY(0deg) scale(1); }
-        }
-
-        /* 2. Flip in from right */
-        .in-flip-right {
-            animation: inFlipRight 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes inFlipRight {
-            0%   { opacity: 0; transform: translateX(120%) rotateY(-90deg) scale(0.7); }
-            100% { opacity: 1; transform: translateX(0) rotateY(0deg) scale(1); }
+        @keyframes zoomIn {
+            0% { opacity: 0; transform: translateZ(-1500px) scale(0.1); }
+            100% { opacity: 1; transform: translateZ(0) scale(1); }
         }
 
-        /* 3. Rise up + tilt */
-        .in-rise {
-            animation: inRise 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        /* 2. 3D Flip Left */
+        .effect-flip-left {
+            animation: flipLeft 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes inRise {
-            0%   { opacity: 0; transform: translateY(140px) rotateX(45deg) scale(0.8); }
+        @keyframes flipLeft {
+            0% { opacity: 0; transform: translateX(-100%) rotateY(90deg); }
+            100% { opacity: 1; transform: translateX(0) rotateY(0deg); }
+        }
+
+        /* 3. 3D Flip Right */
+        .effect-flip-right {
+            animation: flipRight 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes flipRight {
+            0% { opacity: 0; transform: translateX(100%) rotateY(-90deg); }
+            100% { opacity: 1; transform: translateX(0) rotateY(0deg); }
+        }
+
+        /* 4. Rise and Tilt */
+        .effect-rise {
+            animation: rise 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes rise {
+            0% { opacity: 0; transform: translateY(100%) rotateX(-60deg) scale(0.8); }
             100% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
         }
 
-        /* 4. Zoom spin */
-        .in-zoom-spin {
-            animation: inZoomSpin 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        /* 5. Swing in */
+        .effect-swing {
+            animation: swing 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes inZoomSpin {
-            0%   { opacity: 0; transform: scale(0.2) rotateZ(-35deg) rotateY(60deg); }
-            100% { opacity: 1; transform: scale(1) rotateZ(0deg) rotateY(0deg); }
+        @keyframes swing {
+            0% { opacity: 0; transform: rotateZ(-30deg) rotateY(60deg) translateY(-50%); transform-origin: top center; }
+            100% { opacity: 1; transform: rotateZ(0deg) rotateY(0deg) translateY(0); transform-origin: top center; }
         }
 
-        /* 5. Drop from top */
-        .in-drop {
-            animation: inDrop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        /* 6. Spin Scale */
+        .effect-spin {
+            animation: spin 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
-        @keyframes inDrop {
-            0%   { opacity: 0; transform: translateY(-160px) rotateX(-70deg); }
+        @keyframes spin {
+            0% { opacity: 0; transform: scale(0.2) rotateZ(-180deg); }
+            100% { opacity: 1; transform: scale(1) rotateZ(0deg); }
+        }
+
+        /* 7. Drop from Top */
+        .effect-drop {
+            animation: drop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes drop {
+            0% { opacity: 0; transform: translateY(-150%) rotateX(50deg); }
             100% { opacity: 1; transform: translateY(0) rotateX(0deg); }
         }
 
-        /* 6. Swing in */
-        .in-swing {
-            animation: inSwing 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        /* Exit Animation (Fades out smoothly) */
+        .effect-exit {
+            animation: exitFade 0.6s ease forwards;
         }
-        @keyframes inSwing {
-            0%   { opacity: 0; transform: rotateZ(-25deg) rotateY(70deg) scale(0.6); transform-origin: top center; }
-            100% { opacity: 1; transform: rotateZ(0deg) rotateY(0deg) scale(1); transform-origin: top center; }
-        }
-
-        /* 7. Depth push */
-        .in-depth {
-            animation: inDepth 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes inDepth {
-            0%   { opacity: 0; transform: translateZ(-900px) rotateY(30deg); }
-            100% { opacity: 1; transform: translateZ(0) rotateY(0deg); }
+        @keyframes exitFade {
+            0% { opacity: 1; transform: scale(1) translateZ(0); }
+            100% { opacity: 0; transform: scale(0.8) translateZ(200px); }
         }
 
-        /* 8. Skew reveal */
-        .in-skew {
-            animation: inSkew 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes inSkew {
-            0%   { opacity: 0; transform: translateX(80px) skewX(25deg) rotateY(-40deg) scale(0.85); }
-            100% { opacity: 1; transform: translateX(0) skewX(0deg) rotateY(0deg) scale(1); }
-        }
-
-        /* ============ EXIT ANIMATIONS ============ */
-        .out-fade {
-            animation: outFade 0.55s ease forwards;
-        }
-        @keyframes outFade {
-            from { opacity: 1; transform: scale(1) rotateY(0deg); }
-            to   { opacity: 0; transform: scale(0.85) rotateY(35deg); }
-        }
-
-        /* subtle idle floating for premium feel */
+        /* Subtle 3D Floating when image is standing still */
         .idle-float {
-            animation: idleFloat 4s ease-in-out infinite;
+            animation: idleFloat 4s ease-in-out infinite alternate;
         }
         @keyframes idleFloat {
-            0%, 100% { transform: translateY(0) rotateX(0deg); }
-            50%      { transform: translateY(-12px) rotateX(2deg); }
+            0% { transform: translateY(0px) rotateX(2deg) rotateY(-2deg); }
+            100% { transform: translateY(-10px) rotateX(-2deg) rotateY(2deg); }
+        }
+
+        /* Progress dots at bottom */
+        .progress-container {
+            position: absolute;
+            bottom: 30px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+        }
+        .dot.active {
+            background: #3b82f6;
+            box-shadow: 0 0 10px #3b82f6;
+            width: 24px;
+            border-radius: 4px;
         }
 
         #loader {
@@ -185,29 +195,6 @@
             font-size: 18px;
             font-weight: 600;
             z-index: 20;
-        }
-
-        .progress {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 10;
-        }
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            transition: all 0.4s;
-        }
-        .dot.active {
-            background: #3b82f6;
-            box-shadow: 0 0 12px #3b82f6;
-            width: 26px;
-            border-radius: 6px;
         }
 
     </style>
@@ -222,98 +209,106 @@
     <div id="loader">Fetching Images...</div>
 
     <div class="scene">
-        <div class="stage" id="stage"></div>
-        <div class="progress" id="progress"></div>
+        <div id="stage"></div>
+        <div class="progress-container" id="progress"></div>
     </div>
 
     <script>
-        const entryAnimations = [
-            'in-flip-left',
-            'in-flip-right',
-            'in-rise',
-            'in-zoom-spin',
-            'in-drop',
-            'in-swing',
-            'in-depth',
-            'in-skew'
+        // List of random 3D effects
+        const effectsList = [
+            'effect-zoom-in',
+            'effect-flip-left',
+            'effect-flip-right',
+            'effect-rise',
+            'effect-swing',
+            'effect-spin',
+            'effect-drop'
         ];
 
         let images = [];
-        let current = 0;
-        let timer = null;
-        const SLIDE_TIME = 3200;      // time each image stays
-        const EXIT_TIME = 550;        // exit anim duration
+        let currentIndex = 0;
+        let slideInterval = null;
+        
+        const SLIDE_TIME = 3500; // Time each image stays (3.5 seconds)
+        const EXIT_TIME = 600;   // Time it takes to fade out
 
-        function shuffle(arr) {
-            const a = arr.slice();
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
+        // Function to shuffle array randomly
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
             }
-            return a;
+            return array;
         }
 
+        // Create dots indicator
         function buildDots(total) {
             const progress = document.getElementById('progress');
             progress.innerHTML = '';
             for (let i = 0; i < total; i++) {
-                const d = document.createElement('div');
-                d.className = 'dot' + (i === 0 ? ' active' : '');
-                progress.appendChild(d);
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                progress.appendChild(dot);
             }
         }
 
-        function updateDots(idx) {
-            document.querySelectorAll('.dot').forEach((d, i) => {
-                d.classList.toggle('active', i === idx);
+        // Update active dot
+        function updateDots(index) {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
             });
         }
 
-        function showNext() {
+        // Main function to show 1 image at a time
+        function showNextImage() {
             const stage = document.getElementById('stage');
-            const oldCard = stage.querySelector('.showcase-card');
-            const animClass = entryAnimations[Math.floor(Math.random() * entryAnimations.length)];
+            const oldCard = stage.querySelector('.tv-card');
+            
+            // Pick a random effect from the list
+            const randomEffect = effectsList[Math.floor(Math.random() * effectsList.length)];
+            const item = images[currentIndex];
 
-            const item = images[current];
+            // 1. Create the new card
+            const newCard = document.createElement('div');
+            newCard.className = `tv-card ${randomEffect}`;
+            newCard.innerHTML = `<img src="${item.url}" alt="Showcase Image">`;
+            stage.appendChild(newCard);
 
-            // Build new card
-            const card = document.createElement('div');
-            card.className = 'showcase-card ' + animClass;
-            card.innerHTML = `
-                <img src="${item.url}" alt="Project">
-                <div class="glow"></div>
-            `;
-            stage.appendChild(card);
-
-            // Remove exit of old card
+            // 2. Remove the old card with exit animation
             if (oldCard) {
-                oldCard.classList.remove(...entryAnimations);
-                oldCard.classList.add('out-fade');
-                setTimeout(() => oldCard.remove(), EXIT_TIME);
+                oldCard.className = 'tv-card effect-exit'; // Remove entry effects, add exit
+                setTimeout(() => {
+                    if (oldCard.parentNode) {
+                        oldCard.parentNode.removeChild(oldCard);
+                    }
+                }, EXIT_TIME);
             }
 
-            // After entry animation, add subtle idle float
+            // 3. After entry animation finishes, add the subtle float effect
             setTimeout(() => {
-                card.classList.remove(animClass);
-                card.style.opacity = '1';
-                card.style.transform = 'none';
-                card.classList.add('idle-float');
-            }, 1050);
+                // Only apply if it hasn't been removed yet
+                if (newCard.parentNode) {
+                    newCard.className = 'tv-card idle-float';
+                    newCard.style.opacity = '1'; // Ensure it stays visible
+                }
+            }, 1200); // slightly longer than the entry animation
 
-            updateDots(current);
+            // 4. Update dots
+            updateDots(currentIndex);
 
-            current = (current + 1) % images.length;
+            // 5. Move to next index
+            currentIndex = (currentIndex + 1) % images.length;
         }
 
-        function startLoop() {
-            showNext();
-            timer = setInterval(showNext, SLIDE_TIME);
-        }
-
+        // Load data from API
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
                 const contentType = response.headers.get("content-type");
+                
                 if (!contentType || !contentType.includes("application/json")) {
                     throw new Error("Server did not return JSON.");
                 }
@@ -324,20 +319,25 @@
 
                 loader.style.display = 'none';
 
-                if (!data || data.length === 0) {
+                if (data.length === 0) {
                     subtitle.innerText = "No images found.";
                     return;
                 }
 
-                images = shuffle(data);   // random order each load
-                subtitle.innerText = `Cinematic 3D Showcase (${images.length} Images)`;
+                // Shuffle images so they appear randomly every time page reloads
+                images = shuffle(data);
+                subtitle.innerText = `Cinematic 1-by-1 Showcase (${images.length} Images)`;
 
                 buildDots(images.length);
-                startLoop();
+
+                // Show first image immediately
+                showNextImage();
+
+                // Start the interval for next images
+                slideInterval = setInterval(showNextImage, SLIDE_TIME);
 
             } catch (error) {
-                document.getElementById('loader').innerHTML =
-                    `<span style="color:#ef4444;">Error: ${error.message}</span>`;
+                document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
             }
         }
 
