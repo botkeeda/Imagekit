@@ -38,133 +38,79 @@
             font-weight: 400;
         }
 
-        .scene {
+        /* Container for the straight line slider */
+        .slider-container {
             width: 100%;
-            height: 65vh;
-            perspective: 1200px;
+            max-width: 1200px;
+            height: 60vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+            overflow: hidden;
             position: relative;
             margin-top: 20px;
         }
 
-        .tv-card {
-            position: absolute;
-            width: 260px;
-            height: 360px;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9),
-                        0 0 0 1px rgba(255, 255, 255, 0.1);
-            background: #18181b;
-            opacity: 0;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
+        /* The track that moves left to right */
+        .slider-track {
+            display: flex;
+            gap: 30px; /* Space between images */
+            padding: 20px;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
         }
 
-        .tv-card img {
+        /* Individual Image Card */
+        .slide-card {
+            width: 280px;
+            height: 380px;
+            border-radius: 16px;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1);
+            background: #18181b;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .slide-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.95;
-            transition: opacity 0.3s;
+            opacity: 0.85;
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
-        .tv-card::after {
+        /* Premium glowing effect on the center/active card */
+        .slide-card.active {
+            transform: scale(1.05) translateZ(20px);
+            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.3), 
+                        0 0 0 2px rgba(59, 130, 246, 0.5);
+            z-index: 2;
+        }
+
+        .slide-card.active img {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        /* Dark gradient overlay for depth */
+        .slide-card::after {
             content: '';
             position: absolute;
             inset: 0;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.8) 100%);
             pointer-events: none;
+            opacity: 0.6;
         }
 
-        /* =========================================
-           1 BY 1 RANDOM 3D EFFECTS (TV Screensaver style)
-           ========================================= */
-
-        /* 1. Fly in from deep space */
-        .effect-zoom-in {
-            animation: zoomIn 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes zoomIn {
-            0% { opacity: 0; transform: translateZ(-1500px) scale(0.1); }
-            100% { opacity: 1; transform: translateZ(0) scale(1); }
+        .slide-card.active::after {
+            opacity: 0.3;
         }
 
-        /* 2. 3D Flip Left */
-        .effect-flip-left {
-            animation: flipLeft 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes flipLeft {
-            0% { opacity: 0; transform: translateX(-100%) rotateY(90deg); }
-            100% { opacity: 1; transform: translateX(0) rotateY(0deg); }
-        }
-
-        /* 3. 3D Flip Right */
-        .effect-flip-right {
-            animation: flipRight 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes flipRight {
-            0% { opacity: 0; transform: translateX(100%) rotateY(-90deg); }
-            100% { opacity: 1; transform: translateX(0) rotateY(0deg); }
-        }
-
-        /* 4. Rise and Tilt */
-        .effect-rise {
-            animation: rise 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes rise {
-            0% { opacity: 0; transform: translateY(100%) rotateX(-60deg) scale(0.8); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0deg) scale(1); }
-        }
-
-        /* 5. Swing in */
-        .effect-swing {
-            animation: swing 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes swing {
-            0% { opacity: 0; transform: rotateZ(-30deg) rotateY(60deg) translateY(-50%); transform-origin: top center; }
-            100% { opacity: 1; transform: rotateZ(0deg) rotateY(0deg) translateY(0); transform-origin: top center; }
-        }
-
-        /* 6. Spin Scale */
-        .effect-spin {
-            animation: spin 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        @keyframes spin {
-            0% { opacity: 0; transform: scale(0.2) rotateZ(-180deg); }
-            100% { opacity: 1; transform: scale(1) rotateZ(0deg); }
-        }
-
-        /* 7. Drop from Top */
-        .effect-drop {
-            animation: drop 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-        @keyframes drop {
-            0% { opacity: 0; transform: translateY(-150%) rotateX(50deg); }
-            100% { opacity: 1; transform: translateY(0) rotateX(0deg); }
-        }
-
-        /* Exit Animation (Fades out smoothly) */
-        .effect-exit {
-            animation: exitFade 0.6s ease forwards;
-        }
-        @keyframes exitFade {
-            0% { opacity: 1; transform: scale(1) translateZ(0); }
-            100% { opacity: 0; transform: scale(0.8) translateZ(200px); }
-        }
-
-        /* Subtle 3D Floating when image is standing still */
-        .idle-float {
-            animation: idleFloat 4s ease-in-out infinite alternate;
-        }
-        @keyframes idleFloat {
-            0% { transform: translateY(0px) rotateX(2deg) rotateY(-2deg); }
-            100% { transform: translateY(-10px) rotateX(-2deg) rotateY(2deg); }
-        }
-
-        /* Progress dots at bottom */
+        /* Progress dots at the bottom */
         .progress-container {
             position: absolute;
             bottom: 30px;
@@ -197,6 +143,11 @@
             z-index: 20;
         }
 
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .slide-card { width: 240px; height: 340px; }
+            .header h1 { font-size: 26px; }
+        }
     </style>
 </head>
 <body>
@@ -208,31 +159,19 @@
 
     <div id="loader">Fetching Images...</div>
 
-    <div class="scene">
-        <div id="stage"></div>
+    <div class="slider-container" id="sliderContainer">
+        <div class="slider-track" id="sliderTrack"></div>
         <div class="progress-container" id="progress"></div>
     </div>
 
     <script>
-        // List of random 3D effects
-        const effectsList = [
-            'effect-zoom-in',
-            'effect-flip-left',
-            'effect-flip-right',
-            'effect-rise',
-            'effect-swing',
-            'effect-spin',
-            'effect-drop'
-        ];
-
         let images = [];
         let currentIndex = 0;
-        let slideInterval = null;
+        let autoPlayInterval = null;
         
-        const SLIDE_TIME = 3500; // Time each image stays (3.5 seconds)
-        const EXIT_TIME = 600;   // Time it takes to fade out
+        const SLIDE_TIME = 3000; // 3 seconds per slide
 
-        // Function to shuffle array randomly
+        // Shuffle array for random order
         function shuffle(array) {
             let currentIndex = array.length, randomIndex;
             while (currentIndex != 0) {
@@ -243,67 +182,74 @@
             return array;
         }
 
-        // Create dots indicator
-        function buildDots(total) {
+        // Build UI
+        function initSlider() {
+            const track = document.getElementById('sliderTrack');
             const progress = document.getElementById('progress');
+            track.innerHTML = '';
             progress.innerHTML = '';
-            for (let i = 0; i < total; i++) {
+
+            images.forEach((item, index) => {
+                // Create Card
+                const card = document.createElement('div');
+                card.className = 'slide-card' + (index === 0 ? ' active' : '');
+                card.innerHTML = `<img src="${item.url}" alt="Project Image">`;
+                track.appendChild(card);
+
+                // Create Dot
                 const dot = document.createElement('div');
-                dot.className = 'dot' + (i === 0 ? ' active' : '');
+                dot.className = 'dot' + (index === 0 ? ' active' : '');
                 progress.appendChild(dot);
-            }
-        }
-
-        // Update active dot
-        function updateDots(index) {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
             });
+
+            moveToSlide(0);
+            startAutoPlay();
         }
 
-        // Main function to show 1 image at a time
-        function showNextImage() {
-            const stage = document.getElementById('stage');
-            const oldCard = stage.querySelector('.tv-card');
+        // Function to calculate movement and slide
+        function moveToSlide(index) {
+            const track = document.getElementById('sliderTrack');
+            const cards = document.querySelectorAll('.slide-card');
+            const dots = document.querySelectorAll('.dot');
+            const container = document.getElementById('sliderContainer');
+
+            if (cards.length === 0) return;
+
+            // Remove active classes
+            cards.forEach(c => c.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+
+            // Add active class to current
+            cards[index].classList.add('active');
+            dots[index].classList.add('active');
+
+            // Calculate exact center position for the active card
+            const cardWidth = cards[index].offsetWidth;
+            const gap = 30; // match CSS gap
+            const containerWidth = container.offsetWidth;
             
-            // Pick a random effect from the list
-            const randomEffect = effectsList[Math.floor(Math.random() * effectsList.length)];
-            const item = images[currentIndex];
-
-            // 1. Create the new card
-            const newCard = document.createElement('div');
-            newCard.className = `tv-card ${randomEffect}`;
-            newCard.innerHTML = `<img src="${item.url}" alt="Showcase Image">`;
-            stage.appendChild(newCard);
-
-            // 2. Remove the old card with exit animation
-            if (oldCard) {
-                oldCard.className = 'tv-card effect-exit'; // Remove entry effects, add exit
-                setTimeout(() => {
-                    if (oldCard.parentNode) {
-                        oldCard.parentNode.removeChild(oldCard);
-                    }
-                }, EXIT_TIME);
-            }
-
-            // 3. After entry animation finishes, add the subtle float effect
-            setTimeout(() => {
-                // Only apply if it hasn't been removed yet
-                if (newCard.parentNode) {
-                    newCard.className = 'tv-card idle-float';
-                    newCard.style.opacity = '1'; // Ensure it stays visible
-                }
-            }, 1200); // slightly longer than the entry animation
-
-            // 4. Update dots
-            updateDots(currentIndex);
-
-            // 5. Move to next index
-            currentIndex = (currentIndex + 1) % images.length;
+            // Math to keep the active card dead center
+            const offset = (cardWidth + gap) * index;
+            const centerOffset = (containerWidth / 2) - (cardWidth / 2);
+            
+            track.style.transform = `translateX(${centerOffset - offset}px)`;
+            
+            currentIndex = index;
         }
 
-        // Load data from API
+        // Auto Play Logic
+        function startAutoPlay() {
+            if (autoPlayInterval) clearInterval(autoPlayInterval);
+            autoPlayInterval = setInterval(() => {
+                let nextIndex = currentIndex + 1;
+                if (nextIndex >= images.length) {
+                    nextIndex = 0; // Loop back to start
+                }
+                moveToSlide(nextIndex);
+            }, SLIDE_TIME);
+        }
+
+        // Fetch Data
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
@@ -324,22 +270,24 @@
                     return;
                 }
 
-                // Shuffle images so they appear randomly every time page reloads
                 images = shuffle(data);
-                subtitle.innerText = `Cinematic 1-by-1 Showcase (${images.length} Images)`;
+                subtitle.innerText = `Smooth Line Showcase (${images.length} Images)`;
 
-                buildDots(images.length);
-
-                // Show first image immediately
-                showNextImage();
-
-                // Start the interval for next images
-                slideInterval = setInterval(showNextImage, SLIDE_TIME);
+                initSlider();
 
             } catch (error) {
                 document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
             }
         }
+
+        // Pause auto-play on hover (Premium touch)
+        document.getElementById('sliderContainer').addEventListener('mouseenter', () => {
+            clearInterval(autoPlayInterval);
+        });
+        
+        document.getElementById('sliderContainer').addEventListener('mouseleave', () => {
+            startAutoPlay();
+        });
 
         window.onload = loadImages;
     </script>
