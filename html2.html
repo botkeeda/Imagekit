@@ -38,32 +38,6 @@
             font-weight: 400;
         }
 
-        .live-badge {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 20px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #e2e8f0;
-            backdrop-filter: blur(10px);
-            z-index: 10;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #3b82f6;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #3b82f6;
-        }
-
         .scene {
             width: 100%;
             height: 60vh;
@@ -80,12 +54,89 @@
             height: 280px;
             position: relative;
             transform-style: preserve-3d;
-            animation: rotate360 30s infinite linear;
             transform: rotateX(-10deg);
+        }
+
+        /* Random 3D animation classes — JS will pick one each reload */
+        .anim-rotate360 {
+            animation: rotate360 30s infinite linear;
+        }
+        .anim-tilt-flip {
+            animation: tiltFlip 28s infinite linear;
+        }
+        .anim-wave-spin {
+            animation: waveSpin 32s infinite linear;
+        }
+        .anim-pulse-rotate {
+            animation: pulseRotate 26s infinite ease-in-out;
+        }
+        .anim-float-spin {
+            animation: floatSpin 34s infinite linear;
+        }
+        .anim-orbit {
+            animation: orbitSpin 30s infinite linear;
+        }
+        .anim-twist {
+            animation: twistSpin 29s infinite linear;
+        }
+        .anim-helix {
+            animation: helixSpin 33s infinite linear;
         }
 
         .scene:hover .carousel {
             animation-play-state: paused;
+        }
+
+        @keyframes rotate360 {
+            from { transform: rotateX(-10deg) rotateY(0deg); }
+            to { transform: rotateX(-10deg) rotateY(-360deg); }
+        }
+
+        @keyframes tiltFlip {
+            0%   { transform: rotateX(-20deg) rotateY(0deg); }
+            50%  { transform: rotateX(20deg) rotateY(-180deg); }
+            100% { transform: rotateX(-20deg) rotateY(-360deg); }
+        }
+
+        @keyframes waveSpin {
+            0%   { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            25%  { transform: rotateX(15deg) rotateY(-90deg) rotateZ(10deg); }
+            50%  { transform: rotateX(0deg) rotateY(-180deg) rotateZ(0deg); }
+            75%  { transform: rotateX(-15deg) rotateY(-270deg) rotateZ(-10deg); }
+            100% { transform: rotateX(0deg) rotateY(-360deg) rotateZ(0deg); }
+        }
+
+        @keyframes pulseRotate {
+            0%   { transform: rotateX(-10deg) rotateY(0deg) scale(1); }
+            50%  { transform: rotateX(-10deg) rotateY(-180deg) scale(1.15); }
+            100% { transform: rotateX(-10deg) rotateY(-360deg) scale(1); }
+        }
+
+        @keyframes floatSpin {
+            0%   { transform: rotateX(-8deg) rotateY(0deg) translateY(0px); }
+            25%  { transform: rotateX(-8deg) rotateY(-90deg) translateY(-20px); }
+            50%  { transform: rotateX(-8deg) rotateY(-180deg) translateY(0px); }
+            75%  { transform: rotateX(-8deg) rotateY(-270deg) translateY(20px); }
+            100% { transform: rotateX(-8deg) rotateY(-360deg) translateY(0px); }
+        }
+
+        @keyframes orbitSpin {
+            0%   { transform: rotateX(-15deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(-15deg) rotateY(-360deg) rotateZ(-30deg); }
+        }
+
+        @keyframes twistSpin {
+            0%   { transform: rotateX(-10deg) rotateY(0deg) rotateZ(0deg); }
+            50%  { transform: rotateX(10deg) rotateY(-180deg) rotateZ(180deg); }
+            100% { transform: rotateX(-10deg) rotateY(-360deg) rotateZ(360deg); }
+        }
+
+        @keyframes helixSpin {
+            0%   { transform: rotateX(-5deg) rotateY(0deg) skewX(0deg); }
+            25%  { transform: rotateX(-5deg) rotateY(-90deg) skewX(5deg); }
+            50%  { transform: rotateX(-5deg) rotateY(-180deg) skewX(0deg); }
+            75%  { transform: rotateX(-5deg) rotateY(-270deg) skewX(-5deg); }
+            100% { transform: rotateX(-5deg) rotateY(-360deg) skewX(0deg); }
         }
 
         .carousel-card {
@@ -120,11 +171,6 @@
             transform: scale(1.05);
         }
 
-        @keyframes rotate360 {
-            from { transform: rotateX(-10deg) rotateY(0deg); }
-            to { transform: rotateX(-10deg) rotateY(-360deg); }
-        }
-
         #loader {
             position: absolute;
             top: 50%;
@@ -152,12 +198,25 @@
         </div>
     </div>
 
-    <div class="live-badge">
-        <div class="live-dot"></div>
-        LIVE
-    </div>
-
     <script>
+        // Random 3D animation picker — different every page reload
+        const animations = [
+            'anim-rotate360',
+            'anim-tilt-flip',
+            'anim-wave-spin',
+            'anim-pulse-rotate',
+            'anim-float-spin',
+            'anim-orbit',
+            'anim-twist',
+            'anim-helix'
+        ];
+
+        function applyRandomAnimation() {
+            const carousel = document.getElementById('carousel');
+            const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+            carousel.classList.add(randomAnim);
+        }
+
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
@@ -201,6 +260,9 @@
                     `;
                     carousel.appendChild(card);
                 });
+
+                // Apply random 3D animation after cards are built
+                applyRandomAnimation();
 
             } catch (error) {
                 document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
