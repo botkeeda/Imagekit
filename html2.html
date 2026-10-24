@@ -3,130 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>3D Project Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
         body { 
-            background: #0f172a; 
+            background: #09090b; /* Very dark background like screenshot */
             color: #fff;
             min-height: 100vh; 
-            padding: 30px 20px; 
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow: hidden; /* Hide scrollbars */
         }
 
-        h2 {
-            font-weight: 500;
-            margin-bottom: 30px;
-            color: #e2e8f0;
-            letter-spacing: 1px;
+        /* Header styling */
+        .header {
             text-align: center;
+            margin-top: 40px;
+            z-index: 10;
         }
 
-        /* Gallery Grid */
-        .gallery-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); /* 3 columns per line */
-            gap: 20px; 
-            width: 100%;
-            max-width: 1000px;
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            color: #ffffff;
         }
 
-        .image-card { 
-            background: #1e293b; 
-            border: 1px solid #334155; 
-            border-radius: 12px; 
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        /* Hover Animation */
-        .image-card:hover { 
-            transform: translateY(-5px) scale(1.02); 
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
-            border-color: #3b82f6;
-        }
-
-        .image-card img { 
-            width: 100%; 
-            height: 220px; 
-            object-fit: cover; 
-            display: block;
-        }
-
-        /* Loading State */
-        #loader {
-            color: #94a3b8;
+        .header p {
             font-size: 16px;
-            margin-top: 50px;
+            color: #a1a1aa;
+            font-weight: 400;
         }
 
-        /* Responsive Design */
-        @media (max-width: 900px) { 
-            .gallery-grid { grid-template-columns: repeat(2, 1fr); } 
-            .image-card img { height: 180px; }
+        /* Live Button at bottom */
+        .live-badge {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e2e8f0;
+            backdrop-filter: blur(10px);
+            z-index: 10;
         }
-        @media (max-width: 500px) { 
-            .gallery-grid { grid-template-columns: 1fr; } 
-            .image-card img { height: 250px; }
-            h2 { font-size: 20px; }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #3b82f6; /* Blue dot */
+            border-radius: 50%;
+            box-shadow: 0 0 10px #3b82f6;
         }
+
+        /* 3D Scene Setup */
+        .scene {
+            width: 100%;
+            height: 60vh;
+            margin-top: 50px;
+            perspective: 1200px; /* Depth of field */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* The rotating cylinder */
+        .carousel {
+            width: 200px;
+            height: 280px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate360 30s infinite linear; /* 30s for slow rotation */
+            transform: rotateX(-10deg); /* Slight tilt for better view */
+        }
+
+        /* Pause animation on hover */
+        .scene:hover .carousel {
+            animation-play-state: paused;
+        }
+
+        /* Individual Image Cards */
+        .carousel-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: #18181b;
+            transition: border-color 0.3s;
+        }
+
+        /* Image styling */
+        .carousel-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        /* Highlight on hover */
+        .carousel-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+        }
+
+        .carousel-card:hover img {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        /* Keyframes for infinite rotation */
+        @keyframes rotate360 {
+            from { transform: rotateX(-10deg) rotateY(0deg); }
+            to { transform: rotateX(-10deg) rotateY(-360deg); }
+        }
+
+        /* Loader */
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #3b82f6;
+            font-size: 18px;
+            font-weight: 600;
+            z-index: 20;
+        }
+
     </style>
 </head>
 <body>
 
-    <h2>My Image Gallery</h2>
+    <!-- Header -->
+    <div class="header">
+        <h1>Project Showcases</h1>
+        <p id="subtitle">Loading Gallery...</p>
+    </div>
 
-    <!-- Loader text -->
-    <div id="loader">Loading images...</div>
+    <!-- Loader -->
+    <div id="loader">Fetching Images...</div>
 
-    <!-- Gallery Section -->
-    <div class="gallery-grid" id="galleryGrid"></div>
+    <!-- 3D Scene -->
+    <div class="scene">
+        <div class="carousel" id="carousel">
+            <!-- Images injected here -->
+        </div>
+    </div>
+
+    <!-- Live Button -->
+    <div class="live-badge">
+        <div class="live-dot"></div>
+        LIVE
+    </div>
 
     <script>
-        // Server se images fetch karne ka function
         async function loadImages() {
             try {
                 const response = await fetch('/api/list');
                 
-                // Check karein ke response JSON hai
                 const contentType = response.headers.get("content-type");
                 if (!contentType || !contentType.includes("application/json")) {
-                    throw new Error("Server ne JSON nahi bheja.");
+                    throw new Error("Server did not return JSON.");
                 }
 
                 const data = await response.json();
-                const grid = document.getElementById('galleryGrid');
+                const carousel = document.getElementById('carousel');
                 const loader = document.getElementById('loader');
+                const subtitle = document.getElementById('subtitle');
 
-                loader.style.display = 'none'; // Loader hata dein
+                loader.style.display = 'none'; // Hide loader
 
                 if (data.length === 0) {
-                    grid.innerHTML = '<p style="color:#94a3b8; width:100%; text-align:center; grid-column: 1/-1;">No images found.</p>';
+                    subtitle.innerText = "No images found.";
                     return;
                 }
 
-                // Har image ke liye card banayein
-                data.forEach((item) => {
+                // Update subtitle count
+                subtitle.innerText = `Rotating 3D Preview (${data.length} Images)`;
+
+                // 3D Math: Calculate radius based on number of images
+                // Formula: radius = (item_width / 2) / tan(PI / n)
+                const totalItems = data.length;
+                const cardWidth = 200;
+                
+                // Ensure radius is not too small if images are few
+                let radius = (cardWidth / 2) / Math.tan(Math.PI / totalItems);
+                if (totalItems < 4) radius = 300; // Minimum radius for few images
+
+                const angleStep = 360 / totalItems;
+
+                data.forEach((item, index) => {
                     const card = document.createElement('div');
-                    card.className = 'image-card';
+                    card.className = 'carousel-card';
                     
+                    // Rotate each card and push it outward by the radius
+                    const angle = index * angleStep;
+                    card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+
                     card.innerHTML = `
-                        <img src="${item.url}" alt="Gallery Image" loading="lazy">
+                        <img src="${item.url}" alt="Image" loading="lazy">
                     `;
-                    grid.appendChild(card);
+                    carousel.appendChild(card);
                 });
 
             } catch (error) {
-                document.getElementById('loader').innerHTML = `<span style="color:red;">Error: ${error.message}</span>`;
+                document.getElementById('loader').innerHTML = `<span style="color:#ef4444;">Error: ${error.message}</span>`;
             }
         }
 
-        // Page load hote hi images load karein
         window.onload = function() {
             loadImages();
         };
