@@ -1,4 +1,3 @@
-import { config } from '../config.js';
 import formidable from 'formidable';
 import fs from 'fs';
 
@@ -6,6 +5,9 @@ export const config = { api: { bodyParser: false } };
 
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+    // APNI PRIVATE KEY YAHAN DAALEIN
+    const privateKey = "private_OBhaXibMoYiOEHfSS2u1zOvHOgI=";
 
     const form = formidable({ multiples: false });
     
@@ -16,7 +18,6 @@ export default async function handler(req, res) {
                 return resolve();
             }
 
-            // Vercel forms files as arrays in newer versions
             const uploadedFile = Array.isArray(files.file) ? files.file[0] : files.file;
             const fileName = Array.isArray(fields.fileName) ? fields.fileName[0] : fields.fileName;
 
@@ -25,7 +26,6 @@ export default async function handler(req, res) {
                 return resolve();
             }
 
-            const privateKey = config.IMAGEKIT_PRIVATE_KEY;
             const formData = new FormData();
             formData.append('file', fs.createReadStream(uploadedFile.filepath));
             formData.append('fileName', fileName || uploadedFile.originalFilename);
